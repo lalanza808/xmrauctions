@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Sale Info</h2>
+    </header>
+    <section>
+      <p class="sale-info"><strong>Item</strong>: {{ sale.item }}</p>
+      <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
+      <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
+      <p class="sale-info"><strong>Escrow Account Index</strong>: {{ sale.escrow_account_index }}</p>
+      <p class="sale-info"><strong>Agreed Price (XMR)</strong>: {{ sale.agreed_price_xmr }}</p>
+      <p class="sale-info"><strong>Platform Fee (XMR)</strong>: {{ sale.platform_fee_xmr }}</p>
+      <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
+      <p class="sale-info"><strong>Received Payment (XMR)</strong>: {{ sale.received_payment_xmr }}</p>
+      <p class="sale-info"><strong>Escrow Period (days)</strong>: {{ sale.escrow_period_days }}</p>
+      <p class="sale-info"><strong>Buyer Notified</strong>: {{ sale.buyer_notified }}</p>
+      <p class="sale-info"><strong>Seller Notified</strong>: {{ sale.seller_notified }}</p>
+      <p class="sale-info"><strong>Payment Received</strong>: {{ sale.payment_received }}</p>
+      <p class="sale-info"><strong>Payment Refunded</strong>: {{ sale.payment_refunded }}</p>
+      <p class="sale-info"><strong>Item Shipped</strong>: {{ sale.item_shipped }}</p>
+      <p class="sale-info"><strong>Item Received</strong>: {{ sale.item_received }}</p>
+      <p class="sale-info"><strong>Buyer Disputed</strong>: {{ sale.buyer_disputed }}</p>
+      <p class="sale-info"><strong>Seller Disputed</strong>: {{ sale.seller_disputed }}</p>
+      <p class="sale-info"><strong>Escrow Complete</strong>: {{ sale.escrow_complete }}</p>
+      <p class="sale-info"><strong>Seller Paid</strong>: {{ sale.seller_paid }}</p>
+      <p class="sale-info"><strong>Platform Paid</strong>: {{ sale.platform_paid }}</p>
+      <p class="sale-info"><strong>Sale Finalized</strong>: {{ sale.sale_finalized }}</p>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

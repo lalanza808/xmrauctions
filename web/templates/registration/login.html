@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Login</h2>
+    </header>
+    <section>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+      </form>
+      <p>Forgot your password? <a href="{% url 'password_reset' %}">Reset here.</a></p>
+      <p>Don't have an account yet? <a href="{% url 'django_registration_register' %}">Register here.</a></p>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

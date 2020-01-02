@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="banner">
+  {% if request.user.is_authenticated %}
+  <h2>Home</h2>
+  <ul class="actions">
+    <li><a href="{% url 'create_item' %}" class="button">Create Item</a></li>
+    <li><a href="{% url 'list_items' %}?user={{ request.user.id }}" class="button">Your Items</a></li>
+    <li><a href="{% url 'list_bids' %}" class="button">Your Bids</a></li>
+    <li><a href="{% url 'edit_shipping' %}" class="button">Edit Shipping</a></li>
+  </ul>
+  {% else %}
+  <h2>Buy and sell items for digital cash.</h2>
+  <ul class="actions">
+    <li><a href="{% url 'django_registration_register' %}" class="button big">Sign Up</a></li>
+    <li><a href="{% url 'list_items' %}" class="button big">Browse</a></li>
+  </ul>
+  {% endif %}
+</section>
+
+<section id="one" class="wrapper style2 align-center network-stats">
+  <div class="container">
+    <header>
+      <h2>Monero Network Statistics</h2>
+    </header>
+    {% if daemon_info %}
+    <div class="row 200%">
+      <section class="2u 12u$(small)">
+        <p>Network:<br>{{ daemon_info.nettype }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Status:<br>{{ daemon_info.status }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Version:<br>{{ daemon_info.version }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Transactions:<br>{{ daemon_info.tx_count }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Block:<br>{{ daemon_info.height }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Difficulty:<br>{{ daemon_info.difficulty }}</p>
+      </section>
+    </div>
+    {% else %}
+    <p class="text-muted">Daemon is not connected; statistics unavailable.</p>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

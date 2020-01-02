@@ -1,0 +1,1 @@
+[{{ site_name }}] Sale Created! (#{{ sale.bid.id }})

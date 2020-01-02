@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ site_meta.name }}</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="{{ site_meta.name }} official website." />
+  <meta name="author" content="github.com/lalanza808">
+  <meta name="keywords" content="monero xmr auction merchant selling buying" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
+  <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#ea7544">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/noty.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/noty-relax.css' %}" />
+  <!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/skel.min.js' %}"></script>
+  <script src="{% static 'js/skel-layers.min.js' %}"></script>
+  <script>
+  // Perform init within template so we can pass dynamic static location
+  (function($) {
+
+  	skel.init({
+  		reset: 'full',
+  		breakpoints: {
+  			global: {
+  				href: '{% static "css/style.css" %}',
+  				containers: 1400,
+  				grid: { gutters: ['2em', 0] }
+  			},
+  			xlarge: {
+  				media: '(max-width: 1680px)',
+  				href: '{% static "css/style-xlarge.css" %}',
+  				containers: 1200
+  			},
+  			large: {
+  				media: '(max-width: 1280px)',
+  				href: '{% static "css/style-large.css" %}',
+  				containers: 960,
+  				grid: { gutters: ['1.5em', 0] },
+  				viewport: { scalable: false }
+  			},
+  			medium: {
+  				media: '(max-width: 980px)',
+  				href: '{% static "css/style-medium.css" %}',
+  				containers: '90%'
+  			},
+  			small: {
+  				media: '(max-width: 736px)',
+  				href: '{% static "css/style-small.css" %}',
+  				containers: '90%',
+  				grid: { gutters: ['1.25em', 0] }
+  			},
+  			xsmall: {
+  				media: '(max-width: 480px)',
+  				href: '{% static "css/style-xsmall.css" %}',
+  			}
+  		},
+  		plugins: {
+  			layers: {
+  				config: {
+  					mode: 'transform'
+  				},
+  				navPanel: {
+  					animation: 'pushX',
+  					breakpoints: 'medium',
+  					clickToHide: true,
+  					height: '100%',
+  					hidden: true,
+  					html: '<div data-action="moveElement" data-args="nav"></div>',
+  					orientation: 'vertical',
+  					position: 'top-left',
+  					side: 'left',
+  					width: 250
+  				},
+  				navButton: {
+  					breakpoints: 'medium',
+  					height: '4em',
+  					html: '<span class="toggle" data-action="toggleLayer" data-args="navPanel"></span>',
+  					position: 'top-left',
+  					side: 'top',
+  					width: '6em'
+  				}
+  			}
+  		}
+  	});
+
+  	$(function() {
+
+  		// ...
+
+  	});
+
+  })(jQuery);
+  </script>
+  <script src="{% static 'js/noty.js' %}"></script>
+  <noscript>
+    <link rel="stylesheet" href="{% static 'css/skel.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style-xlarge.css' %}" />
+  </noscript>
+  <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+</head>
+<body class="{% if request.path == '/' %}landing{% endif %}">
+
+    <header id="header">
+      <h1><a href="{% url 'home' %}">{{ site_meta.name }}</a></h1>
+      <nav id="nav">
+        <ul>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'list_items' %}">Browse</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout ({{ request.user }})</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    {% if messages %}
+    <script type="text/javascript">
+      {% for message in messages %}
+      new Noty({
+        type: '{{ message.tags }}',
+        theme: 'relax',
+        layout: 'topCenter',
+        text: '{{ message }}',
+        timeout: 3500
+      }).show();
+      {% endfor %}
+    </script>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    <footer id="footer">
+      <div class="container">
+        <ul class="copyright">
+          <li>&copy; {{ site_meta.name }} 2019. All Rights Reserved.</li>
+        </ul>
+        <ul class="copyright">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+    </footer>
+
+</body>
+</html>

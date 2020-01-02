@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Register</h2>
+    </header>
+    <section>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+      </form>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Activation Complete</h2>
+    </header>
+    <section>
+      <p>Activation is complete! You can now <a href="{% url 'login' %}">login</a>.</p>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

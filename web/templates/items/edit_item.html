@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Edit Item</h2>
+    </header>
+    <section>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ formset.as_p }}
+        <input type="submit" value="Submit">
+      </form>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

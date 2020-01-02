@@ -1,0 +1,7 @@
+Hello {{ user }},
+
+Welcome to {{ site_meta.name }}. Please activate your account by accessing the following URL:
+
+{{scheme}}://{{ site }}/accounts/activate/{{ activation_key }}
+
+This link is valid for {{ expiration_days }} days.

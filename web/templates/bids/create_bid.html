@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h3>Create Bid</h3>
+    </header>
+    <section>
+      <p class="sale-info">Item: {{ item.name }}</p>
+      <p class="sale-info">Asking Price: {{ item.ask_price_xmr }}</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+      </form>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

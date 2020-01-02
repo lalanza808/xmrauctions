@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Edit Shipping</h2>
+    </header>
+    <section>
+      <p class="sale-info">You need to provide shipping information before buying or selling items so that others can account for shipping costs.</p>
+      <p class="sale-info">Your city, state, and country will be shown when buying or selling; the physical address will only be shown to sellers when you've won a bid.</p>
+      <br>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ next }}">
+        <input type="submit" value="Submit">
+      </form>
+    </section>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>{{ item.name }}</h2>
+    </header>
+    <section>
+      {% if not item.available %}<p>This item is currently pending sale. Bidding is temporarily closed.</p>{% endif %}
+      <p class="sale-info"><strong>Seller</strong>: <a href="{% url 'list_items' %}?user={{ item.owner.id }}">{{ item.owner }}</a></p>
+      <p class="sale-info"><strong>Creation</strong>: {{ item.list_date | date:"d M Y H:i:s" }}</p>
+      <p class="sale-info"><strong>Last Updated</strong>: {{ item.last_updated | date:"d M Y H:i:s" }}</p>
+      <p class="sale-info"><strong>Description</strong>: {{ item.description }}</p>
+      <p class="sale-info"><strong>Asking Price (XMR)</strong>: {{ item.ask_price_xmr }}</p>
+      <p class="sale-info"><strong>Available</strong>: {{ item.available }}</p>
+      <p class="sale-info"><strong>Location</strong>: {{ item.owner.profile.first.city }}, {{ item.owner.profile.first.state }}, {{ item.owner.profile.first.country }}</p>
+      {% for img in item_images %}
+        <a href="{{ img.image.url }}"><img src="{{ img.thumbnail.url}}" alt="{{ img.thumbnail.name }}"></a>
+      {% endfor %}
+      {% if item.owner == user %}
+          {% if item.available %}
+            <p>
+              <a href="{% url 'edit_item' item.id %}" type="submit" class="button alt">Edit</a>
+              <a href="{% url 'delete_item' item.id %}" type="submit" class="button red">Delete</a>
+            </p>
+          {% else %}
+            <p>Item not available for editing</p>
+          {% endif %}
+      {% else %}
+          {% if item.available %}
+              <p><a href="{% url 'create_bid' item.id %}" type="submit" class="button">Bid</a></p>
+          {% else %}
+              <p>Item not available for bidding</p>
+          {% endif %}
+      {% endif %}
+    </section>
+    {% if item_bids %}
+    <table class="table">
+      <tr>
+        <th>Bid ID</th>
+        <th>Bidder</th>
+        <th>Bid Price (XMR)</th>
+        <th>Bid Accepted</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+      {% for bid in item_bids %}
+      <tr>
+        <td>#{{ bid.id }}</td>
+        <td>{{ bid.bidder }}</td>
+        <td>{{ bid.bid_price_xmr }}</td>
+        <td>{{ bid.accepted }}</td>
+        <td>{{ bid.bidder.profile.first.city }}, {{ bid.bidder.profile.first.state }}, {{ bid.bidder.profile.first.country }}</td>
+        <td>
+          {% if bid.accepted %}
+            {% if bid.bidder == request.user or bid.item.owner == request.user %}
+              <a href="{% url 'get_sale' bid.id %}" class="button alt">View Sale</a>
+            {% endif %}
+          {% else %}
+            {% if bid.bidder == request.user %}
+              <a href="{% url 'edit_bid' bid.id %}" class="button alt">Edit</a>
+              <a href="{% url 'delete_bid' bid.id %}" class="button red">Delete</a>
+            {% elif bid.item.owner == request.user and item.available %}
+              <a href="{% url 'accept_bid' bid.id %}" class="button">Accept</a>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No bids for this item yet.</p>
+    {% endif %}
+  </div>
+</section>
+
+
+
+
+
+
+{% endblock %}

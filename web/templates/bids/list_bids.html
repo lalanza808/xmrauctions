@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container">
+    <header class="minor">
+      <h2>Bids</h2>
+    </header>
+    <section>
+      {% if bids %}
+      <table class="table">
+        <tr>
+          <th>Bid ID</th>
+          <th>Bid Date</th>
+          <th>Item Name</th>
+          <th>Bid Price (XMR)</th>
+          <th>Accepted</th>
+          <th>Actions</th>
+        </tr>
+        {% for bid in bids %}
+        <tr>
+          <td>#{{ bid.id }}</td>
+          <td>{{ bid.bid_date | date:"d M, Y H:i:s" }}</td>
+          <td><a href="{% url 'get_item' bid.item.id %}">{{ bid.item.name}}</a></td>
+          <td>{{ bid.bid_price_xmr }}</td>
+          <td>{{ bid.accepted }}</td>
+          <td>
+            {% if bid.accepted %}
+              <a href="{% url 'get_sale' bid.id %}" class="button alt">View Sale</a>
+            {% else %}
+            <a href="{% url 'edit_bid' bid.id %}" class="button alt">Edit</a>
+            <a href="{% url 'delete_bid' bid.id %}" class="button red">Delete</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>No bids have been made. <a href="{% url 'list_items' %}">Get out there!</a></p>
+      {% endif %}
+    </section>
+  </div>
+</section>
+
+{% if bids.has_other_pages %}
+<ul class="pagination">
+  {% if bids.has_previous %}
+    <li><a href="?page={{ bids.previous_page_number }}">&laquo;</a></li>
+  {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+  {% endif %}
+  {% for i in bids.paginator.page_range %}
+    {% if bids.number == i %}
+      <li class="active"><span>{{ i }} <span class="sr-only"></span></span></li>
+    {% else %}
+      <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endif %}
+  {% endfor %}
+  {% if bids.has_next %}
+    <li><a href="?page={{ bids.next_page_number }}">&raquo;</a></li>
+  {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+  {% endif %}
+</ul>
+{% endif %}
+
+
+{% endblock %}

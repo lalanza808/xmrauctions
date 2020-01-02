@@ -1,0 +1,12 @@
+Congratulations {{ sale.bid.bidder }},
+
+Your bid on item "{{ sale.item.name }}" (#{{ sale.item.id }}), was accepted by the seller and a new item sale was created. You will need to transfer funds to the escrow address to proceed with the sale.
+
+Expected Payment (XMR): {{ sale.expected_payment_xmr }}
+Escrow Address: {{ sale.escrow_address }}
+
+Once the funds are confirmed at this address the seller will be notified to ship the item. You can see more information about the sale at the following URL:
+
+https://{{ site_url }}{{ sale_path }}
+
+Thanks for using {{ site_name }}!

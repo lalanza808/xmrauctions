@@ -1,0 +1,10 @@
+.venv
+.env
+.git
+.dockerignore
+data
+media
+docker-compose.yaml
+Dockerfile
+Dockerfile-monero
+README.md

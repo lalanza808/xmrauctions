@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Wrapper script will activate the virtual environment so
+# we don't need to do so every time we run the container
+
+source .venv/bin/activate
+exec "$@"

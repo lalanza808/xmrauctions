@@ -1,0 +1,32 @@
+FROM ubuntu:19.04
+
+ENV MONERO_VERSION v0.15.0.1
+ENV MONERO_HASH 8d61f992a7e2dbc3d753470b4928b5bb9134ea14cf6f2973ba11d1600c0ce9ad
+ENV MONERO_DL_FILE monero.tar.bz2
+ENV MONERO_SUMS_FILE sha256sums
+
+WORKDIR /opt/monero
+
+# Update system and install dependencies
+# Download Monero binaries from Github
+# Confirm hashes match
+# Install daemon binary
+# Clean up
+
+RUN apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y tar wget \
+  && wget -qO ${MONERO_DL_FILE} https://github.com/monero-project/monero/releases/download/${MONERO_VERSION}/monero-linux-x64-${MONERO_VERSION}.tar.bz2 \
+  && echo "${MONERO_HASH}  ${MONERO_DL_FILE}" > ${MONERO_SUMS_FILE} \
+  && sha256sum -c ${MONERO_SUMS_FILE}; \
+  if [ "$?" -eq 0 ]; \
+  then \
+    echo -e "[+] Hashes match - proceeding with container build"; \
+  else \
+    echo -e "[!] Hashes do not match - exiting"; \
+    exit 5; \
+  fi \
+  && mkdir ./tmp \
+  && tar xjf ${MONERO_DL_FILE} -C ./tmp --strip 1 \
+  && mv ./tmp/* /usr/local/bin/ \
+  && rm -rf ./tmp ${MONERO_SUMS_FILE} ${MONERO_DL_FILE}

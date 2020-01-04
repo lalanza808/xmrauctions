@@ -10,18 +10,25 @@ build: ## Build all the required containers
 	docker build -t monero -f Dockerfile-monero .
 	docker build -t xmrauctions -f Dockerfile-xmrauctions .
 
+up: ## Run dev service containers
+	docker-compose up -d
 
+dev: ## Start development web service
+	./manage.py runserver
 
-### Stage
+### Deploy
 
-stage-up: ## Run the stage containers
-	docker-compose -f docker-compose.yaml -f docker-compose.stage.yaml up -d
+deploy-up: ## Run the containers
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml up -d
 
-stage-ps: ## Show containers
-	docker-compose -f docker-compose.yaml -f docker-compose.stage.yaml ps
+deploy-down: ## Stop the containers
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml down
 
-stage-logs: ## Show logs
-	docker-compose -f docker-compose.yaml -f docker-compose.stage.yaml logs -f
+deploy-ps: ## Show the containers
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml ps
 
-stage-static: ## Collect static
+deploy-logs: ## Show container logs
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml logs -f
+
+deploy-static: ## Collect static
 	docker run --rm --env-file=.env xmrauctions ./manage.py collectstatic --no-input

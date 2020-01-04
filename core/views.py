@@ -1,10 +1,11 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from core.forms import UserShippingAddressForm
 from core.models import UserShippingAddress
-from core.monero import AuctionDaemon
+from core.monero import AuctionDaemon, AuctionWallet
 
 
 def home(request):
@@ -16,6 +17,17 @@ def home(request):
         daemon_info = False
 
     return render(request, 'home.html', {'daemon_info': daemon_info})
+
+def health(request):
+    daemon = AuctionDaemon()
+    wallet = AuctionWallet()
+
+    context = {
+        'daemon_connected': daemon.connected,
+        'wallet_connected': wallet.connected
+    }
+
+    return JsonResponse(context)
 
 @login_required
 def edit_shipping(request):

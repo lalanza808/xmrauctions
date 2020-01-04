@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     'items.apps.ItemsConfig',
     'sales.apps.SalesConfig',
     'core.apps.CoreConfig',
-    'huey.contrib.djhuey'
+    'huey.contrib.djhuey',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -219,3 +221,12 @@ WALLET_PASS = os.environ.get('WALLET_PASS', '')
 
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 EMAIL_FROM = 'noreply@xmrauctions.net'
+
+
+# CORS
+
+CORS_ORIGIN_ALLOW_ALL = os.environ.get('CORS_ORIGIN_ALLOW_ALL', False)
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', [])
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r"^https://static\.\w+\.xmrauctions\.com$",
+]

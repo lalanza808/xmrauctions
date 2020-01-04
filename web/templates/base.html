@@ -138,6 +138,18 @@
     </script>
     {% endif %}
 
+    {% if system_notification %}
+    <script type="text/javascript">
+      new Noty({
+        type: 'info',
+        theme: 'relax',
+        layout: 'bottom',
+        text: '{{ system_notification }}',
+        timeout: 12000
+      }).show();
+    </script>
+    {% endif %}
+
     {% block content %}
     {% endblock %}
 

@@ -16,6 +16,9 @@ up: ## Run dev service containers
 dev: ## Start development web service
 	./manage.py runserver
 
+shell: ## Enter Django shell
+	./manage.py shell
+
 createsuperuser: ## Create admin user in Django backend
 	docker run --rm -it --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py createsuperuser
 

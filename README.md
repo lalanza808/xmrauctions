@@ -18,3 +18,4 @@ In no particular order, nice to haves, and should likely haves:
 - [ ] SES metric alarms
 - [ ] Budget alarms
 - [ ] Unit Tests
+- [ ] DB backups

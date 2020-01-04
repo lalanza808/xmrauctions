@@ -1,6 +1,17 @@
 @charset "UTF-8";
-@import url(font-awesome.min.css);
-@import url("http://fonts.googleapis.com/css?family=Lato:300,400");
+@import url("font-awesome.min.css");
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Lato Light'), local('Lato-Light'), url('../fonts/Lato-Light.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url('../fonts/Lato-Regular.ttf') format('truetype');
+}
 
 /*
 	Interphase by TEMPLATED

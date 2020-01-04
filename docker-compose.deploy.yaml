@@ -7,13 +7,12 @@ services:
     command: [".venv/bin/gunicorn", "-b", "0.0.0.0:8000", "xmrauctions.wsgi"]
     ports:
       - 8000:8000
-  migrations:
-    env_file:
-      - .env
-    image: xmrauctions:latest
-    command: ["./manage.py", "migrate"]
+    depends_on:
+      - "db"
   huey:
     env_file:
       - .env
     image: xmrauctions:latest
     command: ["./manage.py", "run_huey"]
+    depends_on:
+      - "db"

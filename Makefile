@@ -32,3 +32,6 @@ deploy-logs: ## Show container logs
 
 deploy-static: ## Collect static
 	docker run --rm --env-file=.env xmrauctions ./manage.py collectstatic --no-input
+
+deploy-migrations: ## Run migrations
+	docker run --rm --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py migrate

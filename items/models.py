@@ -1,25 +1,14 @@
 from os import path as os_path
 from secrets import token_urlsafe
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from monero.address import address
 from PIL import Image, ExifTags
 from io import BytesIO
 from core.monero import AuctionDaemon
+from core.validators import address_is_valid_monero
 
-
-def address_is_valid_monero(value):
-    try:
-        address(value)
-        return True
-    except ValueError:
-        raise ValidationError(
-            _('%(value)s is an invalid Monero address'),
-            params={'value': value},
-        )
 
 class Item(models.Model):
     owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import items.models
+import core.validators
 
 class Migration(migrations.Migration):
 
@@ -24,7 +25,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(max_length=500)),
                 ('ask_price_xmr', models.FloatField()),
                 ('available', models.BooleanField(default=True)),
-                ('payout_address', models.CharField(max_length=100, validators=[items.models.address_is_valid_monero])),
+                ('payout_address', models.CharField(max_length=100, validators=[core.validators.address_is_valid_monero])),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='owner', to=settings.AUTH_USER_MODEL)),
             ],
         ),

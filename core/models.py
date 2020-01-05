@@ -13,3 +13,7 @@ class UserShippingAddress(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+# Enforce unique email addresses
+User._meta.get_field('email')._unique = True

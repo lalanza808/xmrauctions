@@ -56,6 +56,12 @@ def create_bid(request, item_id):
             bid.item = item
             bid.save()
             return HttpResponseRedirect(reverse('get_item', args=[item_id]))
+        else:
+            form_errors = form.errors.get_json_data()
+            for err in form_errors:
+                err_data = form_errors[err][0]
+                messages.error(request, f'{err}: {err_data["message"]}')
+            return HttpResponseRedirect(reverse('create_bid', args=[item_id]))
     else:
         context = {
             'form': CreateItemBidForm(),
@@ -84,6 +90,12 @@ def edit_bid(request, bid_id):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('get_item', args=[bid.item.id]))
+        else:
+            form_errors = form.errors.get_json_data()
+            for err in form_errors:
+                err_data = form_errors[err][0]
+                messages.error(request, f'{err}: {err_data["message"]}')
+            return HttpResponseRedirect(reverse('create_bid', args=[bid.item.id]))
     else:
         context = {
             'form': CreateItemBidForm(instance=bid),

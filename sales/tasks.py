@@ -42,7 +42,7 @@ def notify_buyer_of_pending_sale():
         sent = send_mail(
             email_template.subject,
             email_template.body,
-            settings.EMAIL_FROM,
+            settings.DEFAULT_FROM_EMAIL,
             [sale.bid.bidder.email]
         )
         if sent == 1:
@@ -63,7 +63,7 @@ def notify_seller_of_funds_received():
         sent = send_mail(
             email_template.subject,
             email_template.body,
-            settings.EMAIL_FROM,
+            settings.DEFAULT_FROM_EMAIL,
             [sale.item.owner.email]
         )
         if sent == 1:

@@ -16,4 +16,4 @@ class UserShippingAddress(models.Model):
 
 
 # Enforce unique email addresses
-User._meta.get_field('email')._unique = True
+# User._meta.get_field('email')._unique = True

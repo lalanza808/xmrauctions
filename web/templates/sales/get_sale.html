@@ -5,8 +5,27 @@
 <section id="main" class="wrapper">
   <div class="container">
     <header class="minor">
-      <h2>Sale Info</h2>
+      <h2>Sale #{{ sale.id }}</h2>
     </header>
+    {% if request.user == sale.bid.bidder %}
+      {% if sale.payment_received == False %}
+      <p class="sale-info">Hello {{ sale.bid.bidder.username }},</p>
+      <p class="sale-info">The seller accepted your bid and the sale process was initiated. Please send funds to the below Monero escrow address (or use the QR code).</p>
+      <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
+      <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
+      <img src="data:image/png;base64,{{ qrcode }}" width=300>
+      {% endif %}
+    {% endif %}
+    {% if request.user == sale.item.owner %}
+      {% if sale.payment_received == False %}
+      <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
+      <p class="sale-info">You accepted bid #{{ sale.bid.id }} on your item "<a href="{% url 'get_item' sale.item.id %}">{{ sale.item.name }}</a>" (#{{ sale.item.id }}). A new sale has been initiated.</p>
+      <p class="sale-info">We are waiting for the buyer to send funds to the escrow address. No action is needed from you at this time, but you will be notified you when there is.</p>
+      <p class="sale-info">Congratulations on the sale!</p>
+      {% endif %}
+    {% endif %}
+    {% if site_meta.debug %}
+    <hr>
     <section>
       <p class="sale-info"><strong>Item</strong>: {{ sale.item }}</p>
       <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
@@ -30,6 +49,7 @@
       <p class="sale-info"><strong>Platform Paid</strong>: {{ sale.platform_paid }}</p>
       <p class="sale-info"><strong>Sale Finalized</strong>: {{ sale.sale_finalized }}</p>
     </section>
+    {% endif %}
   </div>
 </section>
 

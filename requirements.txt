@@ -12,3 +12,4 @@ monero==0.6.2
 psycopg2==2.8.4
 pysha3==1.0.2
 redis==3.3.11
+qrcode==6.1

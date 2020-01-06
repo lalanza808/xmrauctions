@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'sales.apps.SalesConfig',
     'core.apps.CoreConfig',
     'huey.contrib.djhuey',
-    'corsheaders'
+    'corsheaders',
+    'anymail'
 ]
 
 MIDDLEWARE = [
@@ -220,15 +221,18 @@ WALLET_PASS = os.environ.get('WALLET_PASS', '')
 
 # Email info
 
-DEFAULT_FROM_EMAIL = f'{SITE_NAME} <noreply@xmrauctions.com>'
-# EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
-# EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
-# EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', None)
-# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
-# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', False)
-if SENDGRID_API_KEY:
-    EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+EMAIL_DOMAIN = os.environ.get('EMAIL_DOMAIN', 'localhost')
+EMAIL_FROM = os.environ.get('EMAIL_FROM', 'noreply')
+DEFAULT_FROM_EMAIL = f'{SITE_NAME} <{EMAIL_FROM}@{EMAIL_DOMAIN}>'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+ANYMAIL = {
+    'MAILGUN_API_KEY': os.environ.get('MAILGUN_API_KEY', None),
+    "MAILGUN_SENDER_DOMAIN": os.environ.get('MAILGUN_SENDER_DOMAIN', EMAIL_DOMAIN),
+}
+
+if ANYMAIL['MAILGUN_API_KEY']:
+    print('emailgun')
+    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 else:
     EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 

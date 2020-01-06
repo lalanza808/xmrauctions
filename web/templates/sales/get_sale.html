@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -13,7 +14,16 @@
       <p class="sale-info">The seller accepted your bid and the sale process was initiated. Please send funds to the below Monero escrow address (or use the QR code).</p>
       <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
       <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
-      <img src="data:image/png;base64,{{ qrcode }}" width=300>
+      <img src="data:image/png;base64,{{ qrcode }}" width=200 class="sale-qrcode">
+      <hr>
+      <h2>Need a Wallet?</h2>
+      <p class="sale-info">Try out these popular Monero wallet projects:</p>
+      <ul>
+        <li><a href="https://cakewallet.com/" target="_blank">CakeWallet</a></li>
+        <li><a href="https://www.monerujo.io/" target="_blank">Monerujo</a></li>
+        <li><a href="https://mymonero.com/" target="_blank">MyMonero</a></li>
+      </ul>
+
       {% endif %}
     {% endif %}
     {% if request.user == sale.item.owner %}
@@ -26,6 +36,7 @@
     {% endif %}
     {% if site_meta.debug %}
     <hr>
+    <h2>Debug Info</h2>
     <section>
       <p class="sale-info"><strong>Item</strong>: {{ sale.item }}</p>
       <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>

@@ -1056,7 +1056,11 @@ New color: fd4e05
 	#footer {
 		background: #202222;
 		color: #888;
-		padding: 2em 0em 4em;
+    position: relative;
+    width: 100%;
+    bottom: 0;
+    /* height: 100px; */
+    margin-top: 1em;
 	}
 
 		#footer h2, #footer h3, #footer h4 {
@@ -1087,7 +1091,7 @@ New color: fd4e05
 
 		#footer .copyright {
 			font-size: 0.9em;
-			margin: 2em 0 0 0;
+			margin: .5em 0 0 0;
 			padding: 0;
 			text-align: center;
 		}
@@ -1106,6 +1110,11 @@ New color: fd4e05
 					padding-left: 0;
 				}
 
+  footer .container {
+    padding-top: .2em;
+    padding-bottom: 1em;
+  }
+
 	ul.pagination {
 		cursor: default;
 		list-style: none;
@@ -1120,6 +1129,7 @@ New color: fd4e05
 
 	p.sale-info {
 		margin: 0 0 .5em 0;
+    overflow-wrap: break-word;
 	}
 
 	.red {
@@ -1136,4 +1146,14 @@ New color: fd4e05
 
 .network-stats {
 	box-sizing: border-box;
+}
+
+.sale-qrcode {
+  display: block;
+  margin: 0 auto;
+}
+
+html {
+  background-color: #202222;
+  min-height: 100%;
 }

@@ -53,5 +53,5 @@
 	input[type="submit"],
 	input[type="reset"],
 	input[type="button"] {
-		padding: 0;
+		padding: 0 1em 0 1em;
 	}

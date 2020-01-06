@@ -1054,12 +1054,9 @@ New color: fd4e05
 /* Footer */
 
 	#footer {
-		background: #202222;
-		color: #888;
     position: relative;
     width: 100%;
     bottom: 0;
-    /* height: 100px; */
     margin-top: 1em;
 	}
 
@@ -1073,11 +1070,10 @@ New color: fd4e05
 			-o-transition: all 0.2s ease-in-out;
 			-ms-transition: all 0.2s ease-in-out;
 			transition: all 0.2s ease-in-out;
-			color: #888;
 		}
 
 			#footer a:active, #footer a:hover {
-				color: #ffffff;
+				color: #000;
 			}
 
 		#footer .icons .rounded {
@@ -1154,5 +1150,8 @@ New color: fd4e05
 }
 
 html {
+  height: 100%;
+}
+body {
   min-height: 100%;
 }

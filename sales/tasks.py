@@ -6,24 +6,28 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
 from core.monero import AuctionWallet
+from core.models import UserShippingAddress
 from sales.models import ItemSale
 
 
 class EmailTemplate:
-    def __init__(self, item, role):
+    def __init__(self, item, scenario, role):
         context = {
             'sale': item,
             'site_name': settings.SITE_NAME,
             'site_url': settings.SITE_URL,
-            'sale_path': reverse('get_sale', args=[item.bid.id])
+            'sale_path': reverse('get_sale', args=[item.bid.id]),
+            'shipping_address': UserShippingAddress.objects.filter(
+                user=item.bid.bidder
+            ).first()
         }
         subject = render_to_string(
-            template_name=f'sales/notify/{role}/subject.txt',
+            template_name=f'sales/notify/{scenario}/{role}/subject.txt',
             context=context,
             request=None
         )
         body = render_to_string(
-            template_name=f'sales/notify/{role}/body.txt',
+            template_name=f'sales/notify/{scenario}/{role}/body.txt',
             context=context,
             request=None
         )
@@ -37,6 +41,7 @@ def notify_buyer_of_pending_sale():
     for sale in item_sales:
         email_template = EmailTemplate(
             item=sale,
+            scenario='sale_created',
             role='buyer'
         )
         sent = send_mail(
@@ -58,6 +63,7 @@ def notify_seller_of_funds_received():
     for sale in item_sales:
         email_template = EmailTemplate(
             item=sale,
+            scenario='funds_received',
             role='seller'
         )
         sent = send_mail(

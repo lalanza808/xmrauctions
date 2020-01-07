@@ -1,0 +1,9 @@
+Congratulations {{ sale.item.owner }},
+
+The bidder for your item, "{{ sale.item.name }}" (#{{ sale.item.id }}), has sent the proper amount of funds to the escrow address. You may now proceed with shipping the item to them.
+
+You will need to view the sale page on the site to get their address - we don't want to show it here for email privacy reasons and because it might change. Go here to view it:
+
+https://{{ site_url }}{{ sale_path }}
+
+Thanks for using {{ site_name }}!

@@ -4,6 +4,7 @@ from qrcode import make as qrcode_make
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from core.models import UserShippingAddress
 from bids.models import ItemBid
 from sales.models import ItemSale
 
@@ -24,7 +25,10 @@ def get_sale(request, bid_id):
 
     context = {
         'sale': sale,
-        'qrcode': b64encode(_address_qr.getvalue()).decode()
+        'qrcode': b64encode(_address_qr.getvalue()).decode(),
+        'shipping_address': UserShippingAddress.objects.filter(
+            user=bid.bidder
+        ).first()
     }
 
     return render(request, 'sales/get_sale.html', context)

@@ -6,12 +6,15 @@
 <section id="main" class="wrapper">
   <div class="container">
     <header class="minor">
-      <h2>Sale #{{ sale.id }}</h2>
+      <h2>Sale #{{ sale.id }} - {{ sale.item.name }}</h2>
     </header>
     {% if request.user == sale.bid.bidder %}
       {% if sale.payment_received == False %}
       <p class="sale-info">Hello {{ sale.bid.bidder.username }},</p>
-      <p class="sale-info">The seller accepted your bid and the sale process was initiated. Please send funds to the below Monero escrow address (or use the QR code).</p>
+      <p class="sale-info">
+        The seller accepted your bid and the sale process was initiated.
+        Please send funds to the below Monero escrow address (or use the QR code).
+      </p>
       <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
       <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
       <img src="data:image/png;base64,{{ qrcode }}" width=200 class="sale-qrcode">
@@ -23,15 +26,48 @@
         <li><a href="https://www.monerujo.io/" target="_blank">Monerujo</a></li>
         <li><a href="https://mymonero.com/" target="_blank">MyMonero</a></li>
       </ul>
-
+      {% elif sale.payment_received %}
+      <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
+      <p class="sale-info">Your funds have been confirmed!</p>
+      <p class="sale-info">
+        The seller has been notified of the proof of payment and has been provided with your shipping address.
+        Please make sure it is correct and will result in successful package delivery.
+        You can edit the address here: <a href="{% url 'edit_shipping' %}">Edit Shipping Address</a>
+      </p>
+      <p class="sale-info"><strong>Address 1</strong>: {{ shipping_address.address1 }}</p>
+      <p class="sale-info"><strong>Address 2</strong>: {{ shipping_address.address2 }}</p>
+      <p class="sale-info"><strong>City</strong>: {{ shipping_address.city }}</p>
+      <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
+      <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
+      <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
       {% endif %}
     {% endif %}
+
     {% if request.user == sale.item.owner %}
       {% if sale.payment_received == False %}
       <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
-      <p class="sale-info">You accepted bid #{{ sale.bid.id }} on your item "<a href="{% url 'get_item' sale.item.id %}">{{ sale.item.name }}</a>" (#{{ sale.item.id }}). A new sale has been initiated.</p>
-      <p class="sale-info">We are waiting for the buyer to send funds to the escrow address. No action is needed from you at this time, but you will be notified you when there is.</p>
+      <p class="sale-info">
+        You accepted bid #{{ sale.bid.id }} on your item "<a href="{% url 'get_item' sale.item.id %}">{{ sale.item.name }}</a>" (#{{ sale.item.id }}).
+        A new sale has been initiated.
+      </p>
+      <p class="sale-info">
+        We are waiting for the buyer to send funds to the escrow address.
+        No action is needed from you at this time, but you will be notified you when there is.
+      </p>
       <p class="sale-info">Congratulations on the sale!</p>
+      {% elif sale.payment_received %}
+      <p class="sale-info">Congratulations {{ sale.item.owner.username }},</p>
+      <p class="sale-info">
+        The bidder for your item has sent the proper amount of funds to the escrow wallet address.
+        You may now proceed with shipping the item they agreed to purchase from you.
+        Here is the physical address you will need to mail it to:
+      </p>
+      <p class="sale-info"><strong>Address 1</strong>: {{ shipping_address.address1 }}</p>
+      <p class="sale-info"><strong>Address 2</strong>: {{ shipping_address.address2 }}</p>
+      <p class="sale-info"><strong>City</strong>: {{ shipping_address.city }}</p>
+      <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
+      <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
+      <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
       {% endif %}
     {% endif %}
     {% if site_meta.debug %}

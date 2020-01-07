@@ -1,12 +1,6 @@
 # xmrauctions
 
-This is a somewhat simple little CRUD, Django app. It's fairly minimal auction house where you can post items you possess and exchange them with your fellow humans from anywhere around the world.
-
-Item creation requires you to provide a Monero wallet address. There are many good options, including but not limited to:
-
-* [CakeWallet](https://twitter.com/cakewalletxmr)
-* [MyMonero](https://mymonero.com/)
-* [Monerujo](https://www.monerujo.io/)
+This is a somewhat simple little Django, CRUD app. It's fairly minimal auction house where you can post items you possess and exchange them with your fellow humans from anywhere around the world.
 
 This app is in an alpha stage and is not polished enough to transact real money. Once we make progress on some of the to-do items we will proceed to that.
 

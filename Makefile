@@ -6,8 +6,7 @@
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-build: ## Build all the required containers
-	docker build -t monero -f Dockerfile-monero .
+build: ## Build the required containers
 	docker build -t xmrauctions -f Dockerfile-xmrauctions .
 
 up: ## Run dev service containers

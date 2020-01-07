@@ -16,8 +16,10 @@ class ItemSale(models.Model):
     received_payment_xmr = models.FloatField(default=0.0)
     escrow_period_days = models.PositiveSmallIntegerField(default=settings.ESCROW_PERIOD_DAYS)
     buyer_notified = models.BooleanField(default=False)
+    buyer_notified_of_shipment = models.BooleanField(default=False)
     payment_received = models.BooleanField(default=False)
     seller_notified = models.BooleanField(default=False)
+    seller_notified_of_receipt = models.BooleanField(default=False)
     payment_refunded = models.BooleanField(default=False)
     item_shipped = models.BooleanField(default=False)
     item_received = models.BooleanField(default=False)
@@ -25,6 +27,7 @@ class ItemSale(models.Model):
     seller_disputed = models.BooleanField(default=False)
     escrow_complete = models.BooleanField(default=False)
     seller_paid = models.BooleanField(default=False)
+    seller_notified_of_payout = models.BooleanField(default=False)
     platform_paid = models.BooleanField(default=False)
     sale_finalized = models.BooleanField(default=False)
 

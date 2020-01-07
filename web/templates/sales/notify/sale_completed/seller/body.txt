@@ -1,0 +1,9 @@
+Congratulations {{ sale.item.owner }},
+
+The sale of your item, "{{ sale.item.name }}" (#{{ sale.item.id }}), has concluded. You were paid out for your transaction now that the escrow process is closed.
+
+The sale page will remain for 30 more days before being removed from the database. Capture any final details you need.
+
+https://{{ site_url }}{{ sale_path }}
+
+Thanks for using {{ site_name }}!

@@ -33,6 +33,22 @@ class EmailTemplate:
         )
         self.subject = ''.join(subject.splitlines())
         self.body = body
+        self.role = role
+        self.item = item
+
+    def send(self):
+        if self.role == 'buyer':
+            to_address = self.item.bid.bidder.email
+        else:
+            to_address = self.item.item.owner.email
+
+        res = send_mail(
+            self.subject,
+            self.body,
+            settings.DEFAULT_FROM_EMAIL,
+            [to_address]
+        )
+        return res
 
 
 @periodic_task(crontab(minute='*/3'))
@@ -44,12 +60,7 @@ def notify_buyer_of_pending_sale():
             scenario='sale_created',
             role='buyer'
         )
-        sent = send_mail(
-            email_template.subject,
-            email_template.body,
-            settings.DEFAULT_FROM_EMAIL,
-            [sale.bid.bidder.email]
-        )
+        sent = email_template.send()
         if sent == 1:
             sale.buyer_notified = True
             sale.save()
@@ -57,21 +68,50 @@ def notify_buyer_of_pending_sale():
         else:
             return False
 
+@periodic_task(crontab(minute='*/3'))
+def notify_buyer_of_shipment_confirmation():
+    item_sales = ItemSale.objects.filter(item_shipped=True).filter(buyer_notified_of_shipment=False)
+    for sale in item_sales:
+        email_template = EmailTemplate(
+            item=sale,
+            scenario='item_shipped',
+            role='buyer'
+        )
+        sent = email_template.send()
+        if sent == 1:
+            sale.buyer_notified_of_shipment = True
+            sale.save()
+            return True
+        else:
+            return False
+
+@periodic_task(crontab(minute='*/3'))
+def notify_seller_of_shipment_receipt():
+    item_sales = ItemSale.objects.filter(item_shipped=True, item_received=False).filter(seller_notified_of_receipt=False)
+    for sale in item_sales:
+        email_template = EmailTemplate(
+            item=sale,
+            scenario='item_shipped',
+            role='buyer'
+        )
+        sent = email_template.send()
+        if sent == 1:
+            sale.seller_notified_of_receipt = True
+            sale.save()
+            return True
+        else:
+            return False
+
 @periodic_task(crontab(minute='*/2'))
 def notify_seller_of_funds_received():
-    item_sales = ItemSale.objects.filter(seller_notified=False, buyer_notified=True, payment_received=True)
+    item_sales = ItemSale.objects.filter(seller_notified=False, buyer_notified=True).filter(payment_received=True)
     for sale in item_sales:
         email_template = EmailTemplate(
             item=sale,
             scenario='funds_received',
             role='seller'
         )
-        sent = send_mail(
-            email_template.subject,
-            email_template.body,
-            settings.DEFAULT_FROM_EMAIL,
-            [sale.item.owner.email]
-        )
+        sent = email_template.send()
         if sent == 1:
             sale.seller_notified = True
             sale.save()
@@ -79,7 +119,42 @@ def notify_seller_of_funds_received():
         else:
             return False
 
-@periodic_task(crontab(minute='*/10'))
+@periodic_task(crontab(minute='*/12'))
+def pay_sellers_on_sold_items():
+    aw = AuctionWallet()
+    if aw.connected is False:
+        return False
+
+    item_sales = ItemSale.objects.filter(item_received=True, payment_received=True).filter(seller_paid=False)
+    for sale in item_sales:
+        email_template = EmailTemplate(
+            item=sale,
+            scenario='sale_completed',
+            role='seller'
+        )
+
+        if sale.seller_notified_of_payout is False:
+            sent = email_template.send()
+            sale.seller_notified_of_payout = True
+            sale.save()
+
+        try:
+            txs = aw.wallet.accounts[sale.escrow_account_index].transfer(
+                sale.item.payout_address, sale.agreed_price_xmr, relay=True
+            )
+            print(txs)
+            if txs:
+                sale.seller_paid = True
+                sale.escrow_complete = True
+                sale.save()
+                return True
+            else:
+                return False
+        except Exception as e:
+            print('unable to make payment: ', e)
+            return False
+
+@periodic_task(crontab(minute='*/5'))
 def poll_for_buyer_escrow_payments():
     aw = AuctionWallet()
     item_sales = ItemSale.objects.filter(payment_received=False)

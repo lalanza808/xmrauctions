@@ -1,1 +1,1 @@
-[{{ site_name }}] Funds Received! (#{{ sale.bid.id }})
+[{{ site_name }}] Funds Received! (#{{ sale.id }})

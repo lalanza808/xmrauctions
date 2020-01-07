@@ -9,7 +9,6 @@ from bids.models import ItemBid
 from sales.models import ItemSale
 
 
-
 @login_required
 def get_sale(request, bid_id):
     bid = ItemBid.objects.get(id=bid_id)
@@ -32,3 +31,33 @@ def get_sale(request, bid_id):
     }
 
     return render(request, 'sales/get_sale.html', context)
+
+@login_required
+def confirm_shipment(request, sale_id):
+    sale = ItemSale.objects.get(id=sale_id)
+
+    # Only proceed if current user is the seller
+    if request.user == sale.item.owner:
+        sale.item_shipped = True
+        sale.save()
+        messages.success(request, "Package sent, buyer notified!")
+        return HttpResponseRedirect(reverse('get_sale', args=[sale.bid.id]))
+    else:
+        messages.error(request, "You can't confirm a package shipment for an item you don't own.")
+        return HttpResponseRedirect(reverse('home'))
+
+
+
+@login_required
+def confirm_receipt(request, sale_id):
+    sale = ItemSale.objects.get(id=sale_id)
+
+    # Do not proceed unless current user is the buyer
+    if request.user == sale.bid.bidder:
+        sale.item_received = True
+        sale.save()
+        messages.success(request, "Item received!")
+        return HttpResponseRedirect(reverse('get_sale', args=[sale.bid.id]))
+    else:
+        messages.error(request, "You can't confirm receipt of an item you didn't purchase.")
+        return HttpResponseRedirect(reverse('home'))

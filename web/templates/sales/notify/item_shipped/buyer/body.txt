@@ -1,0 +1,9 @@
+Congratulations {{ sale.bid.bidder }},
+
+Your new item "{{ sale.item.name }}" (#{{ sale.item.id }}) was confirmed by the seller to have shipped. Please expect your package in the mail over the following days/weeks depending on the seller's location.
+
+You can see more information about the sale at the following URL:
+
+https://{{ site_url }}{{ sale_path }}
+
+Thanks for using {{ site_name }}!

@@ -13,6 +13,9 @@ from sales.models import ItemSale
 def get_sale(request, bid_id):
     bid = ItemBid.objects.get(id=bid_id)
     sale = ItemSale.objects.get(bid=bid)
+    qr_uri = 'monero:{}?tx_amount={}&tx_description="xmrauctions_sale_{}"'.format(
+        sale.escrow_address, sale.expected_payment_xmr, sale.id
+    )
 
     # Do not proceed unless current user is a buyer or seller
     if request.user != bid.bidder and request.user != sale.item.owner:
@@ -20,7 +23,7 @@ def get_sale(request, bid_id):
         return HttpResponseRedirect(reverse('home'))
 
     _address_qr = BytesIO()
-    address_qr = qrcode_make(sale.escrow_address).save(_address_qr)
+    address_qr = qrcode_make(qr_uri).save(_address_qr)
 
     context = {
         'sale': sale,

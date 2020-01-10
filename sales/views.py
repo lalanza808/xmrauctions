@@ -39,6 +39,8 @@ def get_sale(request, bid_id):
 def confirm_shipment(request, sale_id):
     sale = ItemSale.objects.get(id=sale_id)
 
+    # TODO - dont allow shipment if we dont have an address
+
     # Only proceed if current user is the seller
     if request.user == sale.item.owner:
         sale.item_shipped = True

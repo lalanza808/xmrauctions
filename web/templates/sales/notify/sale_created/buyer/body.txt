@@ -5,7 +5,7 @@ Your bid on item "{{ sale.item.name }}" (#{{ sale.item.id }}), was accepted by t
 Expected Payment (XMR): {{ sale.expected_payment_xmr }}
 Escrow Address: {{ sale.escrow_address }}
 
-Once the funds are confirmed at this address the seller will be notified to ship the item. You can see more information about the sale at the following URL:
+Once the funds are confirmed at this address the seller will be notified to ship the item. We will provide them with a temporary link to view your Shipping Profile; your profile will be wiped out once the sale is complete. You can see more information about the sale at the following URL:
 
 https://{{ site_url }}{{ sale_path }}
 

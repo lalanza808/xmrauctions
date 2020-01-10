@@ -102,7 +102,7 @@ def notify_seller_of_shipment_receipt():
         else:
             return False
 
-@periodic_task(crontab(minute='*/2'))
+@periodic_task(crontab(minute='*/5'))
 def notify_seller_of_funds_received():
     item_sales = ItemSale.objects.filter(seller_notified=False, buyer_notified=True).filter(payment_received=True)
     for sale in item_sales:
@@ -119,7 +119,7 @@ def notify_seller_of_funds_received():
         else:
             return False
 
-@periodic_task(crontab(minute='*/12'))
+@periodic_task(crontab(minute='*/30'))
 def pay_sellers_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -142,7 +142,6 @@ def pay_sellers_on_sold_items():
             txs = aw.wallet.accounts[sale.escrow_account_index].transfer(
                 sale.item.payout_address, sale.agreed_price_xmr, relay=True
             )
-            print(txs)
             if txs:
                 sale.seller_paid = True
                 sale.escrow_complete = True
@@ -154,9 +153,36 @@ def pay_sellers_on_sold_items():
             print('unable to make payment: ', e)
             return False
 
-@periodic_task(crontab(minute='*/5'))
+@periodic_task(crontab(hour='*/6'))
+def pay_platform_on_sold_items():
+    aw = AuctionWallet()
+    if aw.connected is False:
+        return False
+
+    aof = settings.PLATFORM_WALLET_ADDRESS
+    if aof is None:
+        aof = aw.wallet.accounts[0].address()
+
+    item_sales = ItemSale.objects.filter(escrow_complete=True, seller_paid=True, item_received=True).filter(platform_paid=False)
+    for sale in item_sales:
+        try:
+            txs = aw.wallet.accounts[sale.escrow_account_index].sweep_all(aof)
+            if txs:
+                sale.platform_paid = True
+                sale.sale_finalized = True
+                sale.save()
+                return True
+        except Exception as e:
+            print('unable to sweep funds: ', e)
+            return False
+
+
+@periodic_task(crontab(minute='*/3'))
 def poll_for_buyer_escrow_payments():
     aw = AuctionWallet()
+    if aw.connected is False:
+        return False
+
     item_sales = ItemSale.objects.filter(payment_received=False)
     for sale in item_sales:
         sale_account = aw.wallet.accounts[sale.escrow_account_index]

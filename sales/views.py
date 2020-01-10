@@ -56,7 +56,7 @@ def cancel_sale(request, sale_id):
 
     if sale.payment_received:
         messages.error(request, "You can't cancel a sale which has already received funds.")
-        return HttpResponseRedirect(reverse('get_sale', args=[sale.bid.id]))
+        return HttpResponseRedirect(reverse('get_sale', args=[sale.id]))
 
     # Item becomes available
     sale.item.available = True

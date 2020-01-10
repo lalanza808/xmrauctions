@@ -15,8 +15,6 @@
       <p class="sale-info"><strong>Last Updated</strong>: {{ item.last_updated | date:"d M Y H:i:s" }}</p>
       <p class="sale-info"><strong>Description</strong>: {{ item.description }}</p>
       <p class="sale-info"><strong>Asking Price (XMR)</strong>: {{ item.ask_price_xmr }}</p>
-      <p class="sale-info"><strong>Available</strong>: {{ item.available }}</p>
-      <p class="sale-info"><strong>Location</strong>: {{ item.owner.profile.first.city }}, {{ item.owner.profile.first.state }}, {{ item.owner.profile.first.country }}</p>
       {% for img in item_images %}
         <a href="{{ img.image.url }}"><img src="{{ img.thumbnail.url}}" alt="{{ img.thumbnail.name }}"></a>
       {% endfor %}
@@ -41,21 +39,15 @@
     <table class="table">
       <tr>
         <th>Bid ID</th>
-        <th>Bidder</th>
         <th>Bid Price (XMR)</th>
         <th>Platform Fees (XMR)</th>
-        <th>Bid Accepted</th>
-        <th>Location</th>
         <th>Actions</th>
       </tr>
       {% for bid in item_bids %}
       <tr>
         <td>#{{ bid.id }}</td>
-        <td>{{ bid.bidder }}</td>
         <td>{{ bid.bid_price_xmr }}</td>
         <td>{{ bid.bid_price_xmr | determine_platform_fee }}</td>
-        <td>{{ bid.accepted }}</td>
-        <td>{{ bid.bidder.profile.first.city }}, {{ bid.bidder.profile.first.state }}, {{ bid.bidder.profile.first.country }}</td>
         <td>
           {% if bid.accepted %}
             {% if bid.bidder == request.user or bid.item.owner == request.user %}
@@ -78,10 +70,5 @@
     {% endif %}
   </div>
 </section>
-
-
-
-
-
 
 {% endblock %}

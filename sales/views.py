@@ -49,8 +49,6 @@ def confirm_shipment(request, sale_id):
         messages.error(request, "You can't confirm a package shipment for an item you don't own.")
         return HttpResponseRedirect(reverse('home'))
 
-
-
 @login_required
 def confirm_receipt(request, sale_id):
     sale = ItemSale.objects.get(id=sale_id)

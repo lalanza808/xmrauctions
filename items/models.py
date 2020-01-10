@@ -67,6 +67,8 @@ class ItemImage(models.Model):
             # Store a copy of the image for thumbnail
             thumb = img.copy()
 
+            # TODO - task this and just present page without until it's done
+
             # Correct the image size to safe maximums
             img.thumbnail(max_size, Image.ANTIALIAS)
             img.save(img_bytes, format=img_format, quality=80)

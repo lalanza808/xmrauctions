@@ -4,7 +4,7 @@
 {% block content %}
 
 <section id="main" class="wrapper">
-  <div class="container">
+  <div class="container ctr-light">
     <header class="minor">
       <h2>Sale #{{ sale.id }} - {{ sale.item.name }}</h2>
     </header>
@@ -19,6 +19,7 @@
       <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
       <img src="data:image/png;base64,{{ qrcode }}" width=200 class="sale-qrcode">
       <hr>
+      <span class="wallet-text">
       <h2>Need a Wallet?</h2>
       <p class="sale-info">Try out these popular Monero wallet projects:</p>
       <ul>
@@ -27,6 +28,7 @@
         <li><a href="https://www.monerujo.io/" target="_blank">Monerujo (Android)</a></li>
         <li><a href="https://mymonero.com/" target="_blank">MyMonero (Desktop, Web)</a></li>
       </ul>
+      </span>
       {% elif sale.payment_received and sale.item_shipped == False %}
       <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
       <p class="sale-info">Your funds have been confirmed!</p>
@@ -112,34 +114,6 @@
       <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
       <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
       {% endif %}
-    {% endif %}
-
-    {% if site_meta.debug %}
-    <hr>
-    <h2>Debug Info</h2>
-    <section>
-      <p class="sale-info"><strong>Item</strong>: {{ sale.item }}</p>
-      <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
-      <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
-      <p class="sale-info"><strong>Escrow Account Index</strong>: {{ sale.escrow_account_index }}</p>
-      <p class="sale-info"><strong>Agreed Price (XMR)</strong>: {{ sale.agreed_price_xmr }}</p>
-      <p class="sale-info"><strong>Platform Fee (XMR)</strong>: {{ sale.platform_fee_xmr }}</p>
-      <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
-      <p class="sale-info"><strong>Received Payment (XMR)</strong>: {{ sale.received_payment_xmr }}</p>
-      <p class="sale-info"><strong>Escrow Period (days)</strong>: {{ sale.escrow_period_days }}</p>
-      <p class="sale-info"><strong>Buyer Notified</strong>: {{ sale.buyer_notified }}</p>
-      <p class="sale-info"><strong>Seller Notified</strong>: {{ sale.seller_notified }}</p>
-      <p class="sale-info"><strong>Payment Received</strong>: {{ sale.payment_received }}</p>
-      <p class="sale-info"><strong>Payment Refunded</strong>: {{ sale.payment_refunded }}</p>
-      <p class="sale-info"><strong>Item Shipped</strong>: {{ sale.item_shipped }}</p>
-      <p class="sale-info"><strong>Item Received</strong>: {{ sale.item_received }}</p>
-      <p class="sale-info"><strong>Buyer Disputed</strong>: {{ sale.buyer_disputed }}</p>
-      <p class="sale-info"><strong>Seller Disputed</strong>: {{ sale.seller_disputed }}</p>
-      <p class="sale-info"><strong>Escrow Complete</strong>: {{ sale.escrow_complete }}</p>
-      <p class="sale-info"><strong>Seller Paid</strong>: {{ sale.seller_paid }}</p>
-      <p class="sale-info"><strong>Platform Paid</strong>: {{ sale.platform_paid }}</p>
-      <p class="sale-info"><strong>Sale Finalized</strong>: {{ sale.sale_finalized }}</p>
-    </section>
     {% endif %}
   </div>
 </section>

@@ -81,6 +81,8 @@ def notify_buyer_of_shipment_confirmation():
         if sent == 1:
             sale.buyer_notified_of_shipment = True
             sale.save()
+            bidder_profile = UserShippingAddress.objects.get(user=sale.bid.bidder)
+            bidder_profile.delete()
             return True
         else:
             return False

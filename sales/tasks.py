@@ -16,10 +16,7 @@ class EmailTemplate:
             'sale': item,
             'site_name': settings.SITE_NAME,
             'site_url': settings.SITE_URL,
-            'sale_path': reverse('get_sale', args=[item.bid.id]),
-            'shipping_address': UserShippingAddress.objects.filter(
-                user=item.bid.bidder
-            ).first()
+            'sale_path': reverse('get_sale', args=[item.id])
         }
         subject = render_to_string(
             template_name=f'sales/notify/{scenario}/{role}/subject.txt',
@@ -53,7 +50,7 @@ class EmailTemplate:
 
 @periodic_task(crontab(minute='*/3'))
 def notify_buyer_of_pending_sale():
-    item_sales = ItemSale.objects.filter(buyer_notified=False)
+    item_sales = ItemSale.objects.filter(buyer_notified=False, sale_cancelled=False)
     for sale in item_sales:
         email_template = EmailTemplate(
             item=sale,
@@ -157,7 +154,7 @@ def pay_sellers_on_sold_items():
             sale.seller_notified_of_payout = True
             sale.save()
 
-@periodic_task(crontab(hour='*/2'))
+@periodic_task(crontab(hour='*/3'))
 def pay_platform_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -208,4 +205,29 @@ def poll_for_buyer_escrow_payments():
                 sale.id, sale.received_payment_xmr, sale.payment_received
             ))
 
-# TODO - close out old sales
+@periodic_task(crontab(hour='*/8'))
+def close_completed_items_sales():
+    item_sales = ItemSale.objects.filter(platform_paid=True, sale_finalized=True)
+    for sale in item_sales:
+        print(f'deleting item #{sale.item.id} and all accompanying bids, sales, meta')
+        sale.item.delete()
+
+@periodic_task(crontab(minute='*/6'))
+def closed_cancelled_sales():
+    aw = AuctionWallet()
+    if aw.connected is False:
+        return False
+
+    item_sales = ItemSale.objects.filter(sale_cancelled=True)
+    for sale in item_sales:
+        print(f'deleting sale #{sale.id} and transferring back any sent funds to the buyer')
+        sale_account = aw.wallet.accounts[sale.escrow_account_index]
+        if sale_account.balance() > Decimal(0.0):
+            try:
+                sale_account.sweep_all(sale.bid.return_address)
+                sale.delete()
+            except Exception as e:
+                print('unable to sweep all: ', e)
+                return False
+        else:
+            sale.delete()

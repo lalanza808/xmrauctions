@@ -160,7 +160,7 @@ def accept_bid(request, bid_id):
     )
     sale.save()
 
-    return HttpResponseRedirect(reverse('get_sale', args=[bid.id]))
+    return HttpResponseRedirect(reverse('get_sale', args=[sale.id]))
 
 @login_required
 def delete_bid(request, bid_id):

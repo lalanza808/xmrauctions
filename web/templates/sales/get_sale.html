@@ -28,6 +28,9 @@
         <li><a href="https://www.monerujo.io/" target="_blank">Monerujo (Android)</a></li>
         <li><a href="https://mymonero.com/" target="_blank">MyMonero (Desktop, Web)</a></li>
       </ul>
+      <h2>Change your Mind?</h2>
+      <p>You can cancel the sale and reopen the item for bidding. Any funds sent will be transferred again to your return address.</p>
+      <p><a href="{% url 'cancel_sale' sale.id %}" class="button">Cancel Sale</a></p>
       </span>
       {% elif sale.payment_received and sale.item_shipped == False %}
       <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
@@ -80,7 +83,6 @@
         We are waiting for the buyer to send funds to the escrow address.
         No action is needed from you at this time, but you will be notified you when there is.
       </p>
-      <p class="sale-info">Congratulations on the sale!</p>
       {% elif sale.payment_received and sale.item_shipped == False %}
       <p class="sale-info">Congratulations {{ sale.item.owner.username }},</p>
       <p class="sale-info">

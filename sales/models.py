@@ -30,6 +30,7 @@ class ItemSale(models.Model):
     seller_notified_of_payout = models.BooleanField(default=False)
     platform_paid = models.BooleanField(default=False)
     sale_finalized = models.BooleanField(default=False)
+    sale_cancelled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.id} - {self.item.name} - {self.bid.bidder} > {self.item.owner}"

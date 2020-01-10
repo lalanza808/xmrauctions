@@ -51,7 +51,7 @@
         <td>
           {% if bid.accepted %}
             {% if bid.bidder == request.user or bid.item.owner == request.user %}
-              <a href="{% url 'get_sale' bid.id %}" class="button alt">View Sale</a>
+              <a href="{% url 'get_sale' sale.id %}" class="button alt">View Sale</a>
             {% endif %}
           {% else %}
             {% if bid.bidder == request.user %}

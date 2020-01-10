@@ -40,11 +40,13 @@ def get_item(request, item_id):
     item = Item.objects.get(id=item_id)
     item_images = item.images.all()
     item_bids = item.bids.all().order_by('-bid_price_xmr')
+    sale = ItemSale.objects.filter(bid__in=item_bids, sale_cancelled=False).first()
 
     context = {
         'item': item,
         'item_images': item_images,
-        'item_bids': item_bids
+        'item_bids': item_bids,
+        'sale': sale
     }
 
     return render(request, 'items/get_item.html', context)

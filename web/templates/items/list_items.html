@@ -18,7 +18,7 @@
       {% for item in items %}
       <tr>
         <td>#{{ item.id }}</td>
-        <td>Whereabouts</td>
+        <td><a href="https://duckduckgo.com/?q={{ item.whereabouts }}" target="_blank">{{ item.whereabouts }}</a></td>
         <td><a href="{% url 'get_item' item.id %}">{{ item.name }}</a></td>
         <td>{{ item.list_date | date:"d M, Y H:i:s" }}</td>
         <td>{{ item.ask_price_xmr }}</td>

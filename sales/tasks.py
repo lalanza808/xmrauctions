@@ -121,7 +121,7 @@ def notify_seller_of_funds_received():
         else:
             return False
 
-@periodic_task(crontab(minute='*/1'))
+@periodic_task(crontab(minute='*/10'))
 def pay_sellers_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -157,7 +157,7 @@ def pay_sellers_on_sold_items():
             sale.seller_notified_of_payout = True
             sale.save()
 
-@periodic_task(crontab(minute='*'))
+@periodic_task(crontab(hour='*/2'))
 def pay_platform_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:

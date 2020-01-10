@@ -230,7 +230,6 @@ ANYMAIL = {
 }
 
 if ANYMAIL['MAILGUN_API_KEY']:
-    print('emailgun')
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 else:
     EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')

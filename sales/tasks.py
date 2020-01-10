@@ -198,3 +198,5 @@ def poll_for_buyer_escrow_payments():
             print('[+] Sale: #{} - Balance: {} - Payment Received: {}'.format(
                 sale.id, sale.received_payment_xmr, sale.payment_received
             ))
+
+# TODO - close out old sales

@@ -83,7 +83,7 @@ def confirm_shipment(request, sale_id):
         sale.item_shipped = True
         sale.save()
         messages.success(request, "Package sent, buyer notified!")
-        return HttpResponseRedirect(reverse('get_sale', args=[sale.bid.id]))
+        return HttpResponseRedirect(reverse('get_sale', args=[sale.id]))
     else:
         messages.error(request, "You can't confirm a package shipment for an item you don't own.")
         return HttpResponseRedirect(reverse('home'))
@@ -97,7 +97,7 @@ def confirm_receipt(request, sale_id):
         sale.item_received = True
         sale.save()
         messages.success(request, "Item received!")
-        return HttpResponseRedirect(reverse('get_sale', args=[sale.bid.id]))
+        return HttpResponseRedirect(reverse('get_sale', args=[sale.id]))
     else:
         messages.error(request, "You can't confirm receipt of an item you didn't purchase.")
         return HttpResponseRedirect(reverse('home'))

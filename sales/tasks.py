@@ -121,7 +121,7 @@ def notify_seller_of_funds_received():
         else:
             return False
 
-@periodic_task(crontab(minute='*/30'))
+@periodic_task(crontab(minute='*/1'))
 def pay_sellers_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -129,6 +129,23 @@ def pay_sellers_on_sold_items():
 
     item_sales = ItemSale.objects.filter(item_received=True, payment_received=True).filter(seller_paid=False)
     for sale in item_sales:
+        try:
+            print(f'sending agreed payment, {sale.agreed_price_xmr} XMR, from account index #{sale.escrow_account_index} to {sale.item.owner.username} for sale #{sale.id} ({sale.item.name})')
+            sale_account = aw.wallet.accounts[sale.escrow_account_index]
+            if sale_account.balances()[1] > Decimal(0.0):
+                aw.wallet.accounts[sale.escrow_account_index].transfer(
+                    sale.item.payout_address, sale.agreed_price_xmr, relay=True
+                )
+                sale.seller_paid = True
+                sale.escrow_complete = True
+                sale.save()
+            else:
+                print('not enough funds here to transfer. try later')
+                return False
+        except Exception as e:
+            print('unable to make payment: ', e)
+            return False
+
         email_template = EmailTemplate(
             item=sale,
             scenario='sale_completed',
@@ -140,22 +157,7 @@ def pay_sellers_on_sold_items():
             sale.seller_notified_of_payout = True
             sale.save()
 
-        try:
-            txs = aw.wallet.accounts[sale.escrow_account_index].transfer(
-                sale.item.payout_address, sale.agreed_price_xmr, relay=True
-            )
-            if txs:
-                sale.seller_paid = True
-                sale.escrow_complete = True
-                sale.save()
-                return True
-            else:
-                return False
-        except Exception as e:
-            print('unable to make payment: ', e)
-            return False
-
-@periodic_task(crontab(hour='*/6'))
+@periodic_task(crontab(minute='*'))
 def pay_platform_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -163,17 +165,22 @@ def pay_platform_on_sold_items():
 
     aof = settings.PLATFORM_WALLET_ADDRESS
     if aof is None:
-        aof = aw.wallet.accounts[0].address()
+        aof = str(aw.wallet.accounts[0].address())
 
     item_sales = ItemSale.objects.filter(escrow_complete=True, seller_paid=True, item_received=True).filter(platform_paid=False)
     for sale in item_sales:
+        sale_account = aw.wallet.accounts[sale.escrow_account_index]
         try:
-            txs = aw.wallet.accounts[sale.escrow_account_index].sweep_all(aof)
-            if txs:
+            if sale_account.balances()[1] >= Decimal(0.0):
+                print(f'paying out platform wallet, {aof}, remaining funds in account #{sale.escrow_account_index} for sale #{sale.id}')
+                aw.wallet.accounts[sale.escrow_account_index].sweep_all(aof)
                 sale.platform_paid = True
                 sale.sale_finalized = True
                 sale.save()
                 return True
+            else:
+                print('not enough funds here to sweep. try later')
+                return False
         except Exception as e:
             print('unable to sweep funds: ', e)
             return False

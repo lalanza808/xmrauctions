@@ -19,6 +19,7 @@ class Item(models.Model):
     ask_price_xmr = models.FloatField()
     available = models.BooleanField(default=True)
     payout_address = models.CharField(max_length=100, validators=[address_is_valid_monero])
+    whereabouts = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.id} - {self.owner} - {self.name}"

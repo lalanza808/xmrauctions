@@ -17,7 +17,7 @@
       </p>
       <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
       <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
-      <img src="data:image/png;base64,{{ qrcode }}" width=200 class="sale-qrcode">
+      <img src="data:image/png;base64,{{ qrcode }}" width=200 class="center">
       <hr>
       <span class="wallet-text">
       <h2>Need a Wallet?</h2>
@@ -53,11 +53,13 @@
         When it does arrive please click the button below to confirm.
       </p>
       <p class="sale-info">Stay tuned for updates and thanks for using {{ site_meta.name }}!</p>
-      <img src="{% static 'images/monero-symbol-800.png' %}" width=200>
+      <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
       <hr>
       <hr>
+      <span class="wallet-text">
       <p>Click here when you have received your package:</p>
       <p class="sale-info"><a href="{% url 'confirm_receipt' sale.id %}" class="button">Confirm Item Received</a></p>
+      </span>
       {% elif sale.item_received %}
       <p class="sale-info">Hey {{ sale.bid.bidder.username }},</p>
       <p class="sale-info">It sounds like your order was successful. The seller will be sent their funds from the transaction out of the escrow wallet. You are good to go!</p>
@@ -97,7 +99,8 @@
       <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
       <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
       <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
-      <p class="sale-info">If you have shipped the item please confirm by clicking this button:</p>
+      <br>
+      <p class="sale-info">If you have shipped the item, and <strong>only if you have shipped the item</strong>, please confirm by clicking this button:</p>
       <p class="sale-info"><a href="{% url 'confirm_shipment' sale.id %}" class="button">Confirm Item Shipped</a></p>
       {% else %}
       <br>
@@ -108,7 +111,7 @@
       <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
       <p class="sale-info">You've shipped the item, now you need to wait for the buyer to confirm they received it on their end.</p>
       <p class="sale-info">Stay tuned for updates and thanks for using {{ site_meta.name }}!</p>
-      <img src="{% static 'images/monero-symbol-800.png' %}" width=200>
+      <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
       {% elif sale.item_received %}
       <p class="sale-info">Hey {{ sale.item.owner.username }},</p>
       <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!<p>

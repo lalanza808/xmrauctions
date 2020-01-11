@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 from huey import crontab
 from huey.contrib.djhuey import periodic_task
@@ -9,6 +10,8 @@ from core.monero import AuctionWallet
 from core.models import UserShippingAddress
 from sales.models import ItemSale
 
+
+logger = logging.getLogger('django.server')
 
 class EmailTemplate:
     def __init__(self, item, scenario, role):
@@ -48,116 +51,116 @@ class EmailTemplate:
         return res
 
 
-@periodic_task(crontab(minute='*/3'))
+### Notifications
+
+
+@periodic_task(crontab(minute='*'))
 def notify_buyer_of_pending_sale():
     item_sales = ItemSale.objects.filter(buyer_notified=False, sale_cancelled=False)
     for sale in item_sales:
+        logger.info(f'[INFO] Sale #{sale.id} just created, notifying buyer.')
         email_template = EmailTemplate(
             item=sale,
             scenario='sale_created',
             role='buyer'
         )
-        sent = email_template.send()
-        if sent == 1:
-            sale.buyer_notified = True
-            sale.save()
-            return True
-        else:
-            return False
+        email_template.send()
+        sale.buyer_notified = True
+        sale.save()
 
-@periodic_task(crontab(minute='*/3'))
-def notify_buyer_of_shipment_confirmation():
-    item_sales = ItemSale.objects.filter(item_shipped=True).filter(buyer_notified_of_shipment=False)
-    for sale in item_sales:
-        email_template = EmailTemplate(
-            item=sale,
-            scenario='item_shipped',
-            role='buyer'
-        )
-        sent = email_template.send()
-        if sent == 1:
-            sale.buyer_notified_of_shipment = True
-            sale.save()
-            bidder_profile = UserShippingAddress.objects.get(user=sale.bid.bidder)
-            bidder_profile.delete()
-            return True
-        else:
-            return False
-
-@periodic_task(crontab(minute='*/3'))
-def notify_seller_of_shipment_receipt():
-    item_sales = ItemSale.objects.filter(item_shipped=True, item_received=False).filter(seller_notified_of_receipt=False)
-    for sale in item_sales:
-        email_template = EmailTemplate(
-            item=sale,
-            scenario='item_shipped',
-            role='buyer'
-        )
-        sent = email_template.send()
-        if sent == 1:
-            sale.seller_notified_of_receipt = True
-            sale.save()
-            return True
-        else:
-            return False
-
-@periodic_task(crontab(minute='*/5'))
+@periodic_task(crontab(minute='*'))
 def notify_seller_of_funds_received():
     item_sales = ItemSale.objects.filter(seller_notified=False, buyer_notified=True).filter(payment_received=True)
     for sale in item_sales:
+        logger.info(f'[INFO] Funds received from buyer for sale #{sale.id}, notifying seller.')
         email_template = EmailTemplate(
             item=sale,
             scenario='funds_received',
             role='seller'
         )
-        sent = email_template.send()
-        if sent == 1:
-            sale.seller_notified = True
-            sale.save()
-            return True
-        else:
-            return False
+        email_template.send()
+        sale.seller_notified = True
+        sale.save()
 
-@periodic_task(crontab(minute='*/10'))
+@periodic_task(crontab(minute='*'))
+def notify_buyer_of_shipment_confirmation():
+    item_sales = ItemSale.objects.filter(item_shipped=True).filter(buyer_notified_of_shipment=False)
+    for sale in item_sales:
+        logger.info(f'[INFO] Item shipped for sale #{sale.id}, notifying buyer.')
+        email_template = EmailTemplate(
+            item=sale,
+            scenario='item_shipped',
+            role='buyer'
+        )
+        email_template.send()
+        bidder_profile = UserShippingAddress.objects.get(user=sale.bid.bidder)
+        bidder_profile.delete()
+        logger.info(f'[INFO] Buyer shipping info wiped for sale #{sale.id}')
+        sale.buyer_notified_of_shipment = True
+        sale.save()
+
+
+### Payments
+
+@periodic_task(crontab(minute='*'))
+def poll_for_buyer_escrow_payments():
+    aw = AuctionWallet()
+    if aw.connected is False:
+        logging.error('Auction wallet is not connected. Quitting.')
+        return False
+
+    item_sales = ItemSale.objects.filter(payment_received=False)
+    for sale in item_sales:
+        logger.info(f'[INFO] Polling escrow address #{sale.escrow_account_index} for sale #{sale.id} for new funds.')
+        sale_account = aw.wallet.accounts[sale.escrow_account_index]
+        balance = sale_account.balances()[1]
+        sale.received_payment_xmr = balance
+        if balance >= Decimal(sale.expected_payment_xmr):
+            logger.info(f'[INFO] Found payment of {sale.received_payment_xmr} XMR for sale #{sale.id}.')
+            sale.payment_received = True
+
+        sale.save()
+
+
+@periodic_task(crontab(minute='*/5'))
 def pay_sellers_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
+        logging.error('Auction wallet is not connected. Quitting.')
         return False
 
     item_sales = ItemSale.objects.filter(item_received=True, payment_received=True).filter(seller_paid=False)
     for sale in item_sales:
-        try:
-            print(f'sending agreed payment, {sale.agreed_price_xmr} XMR, from account index #{sale.escrow_account_index} to {sale.item.owner.username} for sale #{sale.id} ({sale.item.name})')
-            sale_account = aw.wallet.accounts[sale.escrow_account_index]
-            if sale_account.balances()[1] > Decimal(0.0):
+        logger.info(f'[INFO] Sending {sale.agreed_price_xmr} XMR from wallet account #{sale.escrow_account_index} to item owner\'s payout address for sale #{sale.id}.')
+        sale_account = aw.wallet.accounts[sale.escrow_account_index]
+        if sale_account.balances()[1] > Decimal(sale.agreed_price_xmr):
+            try:
                 aw.wallet.accounts[sale.escrow_account_index].transfer(
-                    sale.item.payout_address, sale.agreed_price_xmr, relay=True
+                    sale.item.payout_address, sale.agreed_price_xmr
                 )
                 sale.seller_paid = True
                 sale.escrow_complete = True
                 sale.save()
-            else:
-                print('not enough funds here to transfer. try later')
-                return False
-        except Exception as e:
-            print('unable to make payment: ', e)
-            return False
+            except Exception as e:
+                logger.error(f'[ERROR] Unable to pay seller for sale #{sale.id}: ')
+        else:
+            logger.warning(f'[WARNING] Not enough unlocked funds available in account #{sale.escrow_account_index} for sale #{sale.id}.')
 
-        email_template = EmailTemplate(
-            item=sale,
-            scenario='sale_completed',
-            role='seller'
-        )
-
-        if sale.seller_notified_of_payout is False:
+        if sale.seller_paid and sale.seller_notified_of_payout is False:
+            email_template = EmailTemplate(
+                item=sale,
+                scenario='sale_completed',
+                role='seller'
+            )
             sent = email_template.send()
             sale.seller_notified_of_payout = True
             sale.save()
 
-@periodic_task(crontab(hour='*/3'))
+@periodic_task(crontab(minute='0', hour='*'))
 def pay_platform_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
+        logging.error('Auction wallet is not connected. Quitting.')
         return False
 
     aof = settings.PLATFORM_WALLET_ADDRESS
@@ -166,68 +169,43 @@ def pay_platform_on_sold_items():
 
     item_sales = ItemSale.objects.filter(escrow_complete=True, seller_paid=True, item_received=True).filter(platform_paid=False)
     for sale in item_sales:
+        logger.info(f'[INFO] Paying platform fees for sale #{sale.id} to wallet {aof}.')
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        try:
-            if sale_account.balances()[1] >= Decimal(0.0):
-                print(f'paying out platform wallet, {aof}, remaining funds in account #{sale.escrow_account_index} for sale #{sale.id}')
+        if sale_account.balances()[1] >= Decimal(0.0):
+            try:
                 aw.wallet.accounts[sale.escrow_account_index].sweep_all(aof)
                 sale.platform_paid = True
                 sale.sale_finalized = True
                 sale.save()
                 return True
-            else:
-                print('not enough funds here to sweep. try later')
-                return False
-        except Exception as e:
-            print('unable to sweep funds: ', e)
-            return False
+            except Exception as e:
+                logger.error(f'[ERROR] Unable to pay platform for sale #{sale.id} - trying again')
+        else:
+            logger.warning(f'[WARNING] Not enough unlocked funds available in account #{sale.escrow_account_index} for sale #{sale.id}.')
 
-
-@periodic_task(crontab(minute='*/3'))
-def poll_for_buyer_escrow_payments():
-    aw = AuctionWallet()
-    if aw.connected is False:
-        return False
-
-    item_sales = ItemSale.objects.filter(payment_received=False)
-    for sale in item_sales:
-        sale_account = aw.wallet.accounts[sale.escrow_account_index]
-
-        sale.received_payment_xmr = sale_account.balance()
-
-        if sale_account.balance() >= Decimal(str(sale.expected_payment_xmr)):
-            sale.payment_received = True
-
-        sale.save()
-
-        if settings.DEBUG:
-            print('[+] Sale: #{} - Balance: {} - Payment Received: {}'.format(
-                sale.id, sale.received_payment_xmr, sale.payment_received
-            ))
-
-@periodic_task(crontab(hour='*/8'))
+@periodic_task(crontab(minute='0', hour='*/12'))
 def close_completed_items_sales():
     item_sales = ItemSale.objects.filter(platform_paid=True, sale_finalized=True)
     for sale in item_sales:
-        print(f'deleting item #{sale.item.id} and all accompanying bids, sales, meta')
+        logger.info(f'[INFO] Deleting item #{sale.item.id} and all accompanying bids, sales, meta, etc.')
         sale.item.delete()
 
-@periodic_task(crontab(minute='*/6'))
+@periodic_task(crontab(minute='*'))
 def closed_cancelled_sales():
     aw = AuctionWallet()
     if aw.connected is False:
+        logging.error('Auction wallet is not connected. Quitting.')
         return False
 
     item_sales = ItemSale.objects.filter(sale_cancelled=True)
     for sale in item_sales:
-        print(f'deleting sale #{sale.id} and transferring back any sent funds to the buyer')
+        logger.info(f'[INFO] Deleting sale #{sale.id} and transferring back any sent funds to the buyer.')
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        if sale_account.balance() > Decimal(0.0):
+        if sale_account.balances()[0] > Decimal(0.0):
             try:
                 sale_account.sweep_all(sale.bid.return_address)
                 sale.delete()
             except Exception as e:
-                print('unable to sweep all: ', e)
-                return False
+                logger.error(f'[ERROR] Unable to return funds to use for sale #{sale.id}.')
         else:
             sale.delete()

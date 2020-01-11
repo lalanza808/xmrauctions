@@ -107,8 +107,8 @@ def edit_bid(request, bid_id):
 @login_required
 def accept_bid(request, bid_id):
     aw = AuctionWallet()
-    bid = ItemBid.objects.get(id=bid_id)
-    platform_fee_xmr = bid.bid_price_xmr * (settings.PLATFORM_FEE_PERCENT / 100)
+    bid = ItemBid.objects.filter(id=bid_id).first()
+    platform_fee_xmr = bid.bid_price_xmr * (settings.PLATFORM_FEE_PERCENT / 100) / 2 # split buyer/seller
     expected_payment_xmr = bid.bid_price_xmr + platform_fee_xmr
     account_label = f'Sale account for Item #{bid.item.id}, Bid #{bid.id}'
 

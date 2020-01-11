@@ -114,9 +114,12 @@
       <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
       {% elif sale.item_received %}
       <p class="sale-info">Hey {{ sale.item.owner.username }},</p>
-      <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!<p>
-      <p class="sale-info">Your payout address provided during item creation will be paid the accepted bid amount out of the escrow wallet.<p>
-      <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}<p>
+      <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!</p>
+      <p class="sale-info">Your payout address provided during item creation will be paid the accepted bid amount out of the escrow wallet.</p>
+      <p class="sale-info"><strong>Accepted Bid (XMR)</strong>:  {{ sale.bid.bid_price_xmr }}</p>
+      <p class="sale-info"><strong>Platform Fee (XMR)</strong>:  {{ sale.platform_fee_xmr }}</p>
+      <p class="sale-info"><strong>Total Payout (XMR)</strong>:  {{ total_seller_payout }}</p>
+      <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
       <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
       <hr>
       <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>

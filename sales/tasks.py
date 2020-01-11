@@ -113,9 +113,9 @@ def poll_for_buyer_escrow_payments():
     for sale in item_sales:
         logger.info(f'[INFO] Polling escrow address #{sale.escrow_account_index} for sale #{sale.id} for new funds.')
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        balance = sale_account.balances()[1]
-        sale.received_payment_xmr = balance
-        if balance >= Decimal(sale.expected_payment_xmr):
+        unlocked = sale_account.balances()[1]
+        sale.received_payment_xmr = unlocked
+        if unlocked >= Decimal(str(sale.expected_payment_xmr)):
             logger.info(f'[INFO] Found payment of {sale.received_payment_xmr} XMR for sale #{sale.id}.')
             sale.payment_received = True
 
@@ -131,12 +131,14 @@ def pay_sellers_on_sold_items():
 
     item_sales = ItemSale.objects.filter(item_received=True, payment_received=True).filter(seller_paid=False)
     for sale in item_sales:
-        logger.info(f'[INFO] Sending {sale.agreed_price_xmr} XMR from wallet account #{sale.escrow_account_index} to item owner\'s payout address for sale #{sale.id}.')
+        # Take platform fees from the sale - the 50:50 split between buyer/seller
+        sale_total = sale.agreed_price_xmr - sale.platform_fee_xmr
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
+        logger.info(f'[INFO] Sending {sale_total} XMR from wallet account #{sale.escrow_account_index} to item owner\'s payout address for sale #{sale.id}.')
         if sale_account.balances()[1] > Decimal(sale.agreed_price_xmr):
             try:
-                aw.wallet.accounts[sale.escrow_account_index].transfer(
-                    sale.item.payout_address, sale.agreed_price_xmr
+                sale_account.transfer(
+                    sale.item.payout_address, sale_total
                 )
                 sale.seller_paid = True
                 sale.escrow_complete = True
@@ -156,7 +158,7 @@ def pay_sellers_on_sold_items():
             sale.seller_notified_of_payout = True
             sale.save()
 
-@periodic_task(crontab(minute='0', hour='*'))
+@periodic_task(crontab(minute='*/30'))
 def pay_platform_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -171,9 +173,11 @@ def pay_platform_on_sold_items():
     for sale in item_sales:
         logger.info(f'[INFO] Paying platform fees for sale #{sale.id} to wallet {aof}.')
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        if sale_account.balances()[1] >= Decimal(0.0):
+        bal = sale_account.balances()[1]
+        if bal >= 0:
+            logger.info(f'[INFO] Getting platform fees of {bal} XMR')
             try:
-                aw.wallet.accounts[sale.escrow_account_index].sweep_all(aof)
+                sale_account.sweep_all(aof)
                 sale.platform_paid = True
                 sale.sale_finalized = True
                 sale.save()

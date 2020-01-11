@@ -33,13 +33,15 @@ def get_sale(request, sale_id):
 
     _address_qr = BytesIO()
     address_qr = qrcode_make(qr_uri).save(_address_qr)
+    total_seller_payout = sale.agreed_price_xmr - sale.platform_fee_xmr
 
     context = {
         'sale': sale,
         'qrcode': b64encode(_address_qr.getvalue()).decode(),
         'shipping_address': UserShippingAddress.objects.filter(
             user=bid.bidder
-        ).first()
+        ).first(),
+        'total_seller_payout': total_seller_payout,
     }
 
     return render(request, 'sales/get_sale.html', context)

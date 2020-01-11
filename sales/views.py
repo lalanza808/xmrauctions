@@ -11,7 +11,11 @@ from sales.models import ItemSale
 
 @login_required
 def get_sale(request, sale_id):
-    sale = ItemSale.objects.get(id=sale_id)
+    sale = ItemSale.objects.filter(id=sale_id).first()
+    if sale is None:
+        messages.error(request, "You can't go there.")
+        return HttpResponseRedirect(reverse('home'))
+
     bid = ItemBid.objects.get(id=sale.bid.id)
     qr_uri = 'monero:{}?tx_amount={}&tx_description="xmrauctions_sale_{}"'.format(
         sale.escrow_address, sale.expected_payment_xmr, sale.id

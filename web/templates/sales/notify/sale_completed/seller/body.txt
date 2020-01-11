@@ -1,9 +1,7 @@
 Congratulations {{ sale.item.owner }},
 
-The sale of your item, "{{ sale.item.name }}" (#{{ sale.item.id }}), has concluded. You were paid out for your transaction now that the escrow process is closed.
+The sale of your item, "{{ sale.item.name }}" (#{{ sale.item.id }}), has concluded. The agreed upon bid price has been transferred to the payout address provided when posting the item.
 
-The sale page will remain for 30 more days before being removed from the database. Capture any final details you need.
-
-https://{{ site_url }}{{ sale_path }}
+In a few more minutes post-processing will complete, the platform will receive it's fees, and the sale, item, and bids will all be removed from the system.
 
 Thanks for using {{ site_name }}!

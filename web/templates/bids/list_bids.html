@@ -19,6 +19,7 @@
           <th>Actions</th>
         </tr>
         {% for bid in bids %}
+
         <tr>
           <td>#{{ bid.id }}</td>
           <td>{{ bid.bid_date | date:"d M, Y H:i:s" }}</td>
@@ -27,7 +28,11 @@
           <td>{{ bid.accepted }}</td>
           <td>
             {% if bid.accepted %}
-              <a href="{% url 'get_sale' bid.id %}" class="button alt">View Sale</a>
+              {% for sale in sales %}
+                {% if sale.bid.id == bid.id %}
+                  <a href="{% url 'get_sale' sale.id %}" class="button alt">View Sale</a>
+                {% endif %}
+              {% endfor %}
             {% else %}
             <a href="{% url 'edit_bid' bid.id %}" class="button alt">Edit</a>
             <a href="{% url 'delete_bid' bid.id %}" class="button red">Delete</a>

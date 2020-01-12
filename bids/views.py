@@ -14,6 +14,7 @@ from core.monero import AuctionWallet
 def list_bids(request):
     page_query = request.GET.get('page', 1)
     bid_list = ItemBid.objects.filter(bidder=request.user)
+    sales = ItemSale.objects.filter(bid__in=bid_list)
     paginator = Paginator(bid_list, 20)
 
     try:
@@ -24,7 +25,8 @@ def list_bids(request):
       bids = paginator.page(paginator.num_pages)
 
     context = {
-        'bids': bids
+        'bids': bids,
+        'sales': sales
     }
 
     return render(request, 'bids/list_bids.html', context)

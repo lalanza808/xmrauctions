@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 """
 
 import os
+from core.monero import AuctionWallet
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -26,7 +27,7 @@ DEBUG = os.environ.get('DEBUG', False)
 ALLOWED_HOSTS = str(os.environ['ALLOWED_HOSTS']).split(',')
 ESCROW_PERIOD_DAYS = os.environ.get('ESCROW_PERIOD_DAYS', 30)
 PLATFORM_FEE_PERCENT = os.environ.get('PLATFORM_FEE_PERCENT', 0)
-PLATFORM_WALLET_ADDRESS = os.environ.get('PLATFORM_WALLET_ADDRESS', None)
+
 
 # Application definition
 
@@ -242,3 +243,14 @@ CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', [])
 CORS_ORIGIN_REGEX_WHITELIST = [
     r"^https://static\.\w+\.xmrauctions\.com$",
 ]
+
+
+# Platform Wallets
+
+aw = AuctionWallet()
+platform_wallet_address = None
+if aw.connected is True:
+    platform_wallet_address = str(aw.wallet.accounts[0].address())
+
+PLATFORM_WALLET_ADDRESS = os.environ.get('PLATFORM_WALLET_ADDRESS', platform_wallet_address)
+DONATION_WALLET_ADDRESS = os.environ.get('DONATION_ADDRESS', PLATFORM_WALLET_ADDRESS)

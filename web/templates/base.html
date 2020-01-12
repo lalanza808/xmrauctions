@@ -78,14 +78,6 @@
   					position: 'top-right',
   					side: 'right',
   					width: 250
-  				},
-  				navButton: {
-  					breakpoints: 'medium',
-  					height: '4em',
-            html: '<a href="{% url 'logout' %}"><i class="fa fa-2x fa-sign-out" aria-hidden="true" style="top: .7em; position: absolute; color: white;"></i></a>',
-  					position: 'top-right',
-  					side: 'top',
-  					width: '6em'
   				}
   			}
   		}
@@ -111,15 +103,7 @@
 
     <header id="header">
       <h1><a href="{% url 'home' %}">{{ site_meta.name }}</a></h1>
-      <nav id="nav">
-        <ul>
-          {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}">Logout ({{ request.user }})</a></li>
-          {% else %}
-            <li><a href="{% url 'login' %}">Login</a></li>
-          {% endif %}
-        </ul>
-      </nav>
+      <nav id="nav"></nav>
     </header>
 
     {% if messages %}

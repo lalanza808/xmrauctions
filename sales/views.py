@@ -13,7 +13,7 @@ from sales.models import ItemSale
 def get_sale(request, sale_id):
     sale = ItemSale.objects.filter(id=sale_id).first()
     if sale is None:
-        messages.error(request, "You can't go there.")
+        messages.error(request, "That sale does not exist.")
         return HttpResponseRedirect(reverse('home'))
 
     bid = ItemBid.objects.get(id=sale.bid.id)

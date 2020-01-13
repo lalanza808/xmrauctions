@@ -17,6 +17,14 @@
       </p>
       <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
       <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
+      {% if incoming_transactions %}
+      <p class="sale-info"><strong>Incoming Payments</strong>:</p>
+      <ul>
+      {% for tx in incoming_transactions %}
+        <li>{{ tx.transaction.hash }} ({{ tx.amount }} XMR)</li>
+      {% endfor %}
+      </ul>
+      {% endif %}
       <img src="data:image/png;base64,{{ qrcode }}" width=200 class="center">
       <hr>
       <span class="wallet-text">

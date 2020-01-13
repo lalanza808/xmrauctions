@@ -7,6 +7,7 @@ from django.contrib import messages
 from core.models import UserShippingAddress
 from bids.models import ItemBid
 from sales.models import ItemSale
+from core.monero import AuctionWallet
 
 
 @login_required
@@ -33,10 +34,14 @@ def get_sale(request, sale_id):
 
     _address_qr = BytesIO()
     address_qr = qrcode_make(qr_uri).save(_address_qr)
-    total_seller_payout = sale.agreed_price_xmr - sale.platform_fee_xmr
+    total_seller_payout = sale.agreed_price_xmr - sale.platform_fee_xmr - sale.network_fee_xmr
 
-    if sale.network_fee_xmr:
-        total_seller_payout = total_seller_payout - sale.network_fee_xmr
+    incoming_transactions = None
+    if sale.payment_received is False:
+        aw = AuctionWallet()
+        if aw.connected:
+            sale_account = aw.wallet.accounts[sale.escrow_account_index]
+            incoming_transactions = sale_account.incoming()
 
     context = {
         'sale': sale,
@@ -45,6 +50,7 @@ def get_sale(request, sale_id):
             user=bid.bidder
         ).first(),
         'total_seller_payout': total_seller_payout,
+        'incoming_transactions': incoming_transactions,
     }
 
     return render(request, 'sales/get_sale.html', context)

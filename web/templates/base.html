@@ -161,7 +161,7 @@
           <li><a href="{% url 'get_terms' %}">FAQ</a></li>
         </ul>
         <hr>
-        <p id="donation-address"><strong>Donation Address</strong>:<br> {{ site_meta.donation_address }}</p>
+        <p id="donation-address"><strong>Donation Address</strong>:<br> {{ site_meta.donation_address }}{% if site_meta.debug %} (stage){% endif %}</p>
       </div>
     </footer>
 

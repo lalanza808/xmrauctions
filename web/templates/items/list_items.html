@@ -6,6 +6,7 @@
   <div class="container">
     <header class="major">
       <h2>View Items</h2>
+      {% if request.user.is_authenticated %}
       <a href="{% url 'list_items' %}?mine=true" class="button">Your Items</a>
       <a href="{% url 'list_items' %}" class="button alt">All Items</a>
       <form method="GET" enctype="multipart/form-data" action="">
@@ -19,7 +20,7 @@
         </div>
         {% endfor %}
       </form>
-
+      {% endif %}
     </header>
     <div id="item-search"></div>
     {% if items %}

@@ -27,17 +27,25 @@
     <table class="table">
       <tr>
         <th>ID</th>
-        <th>Whereabouts</th>
+        <th>Available</th>
         <th>Name</th>
         <th>List Date</th>
+        <th>Whereabouts</th>
         <th>Asking Price (XMR)</th>
       </tr>
       {% for item in items %}
       <tr class="{% if item.owner == request.user %}item-mine{% endif %}">
         <td>#{{ item.id }}</td>
-        <td><a href="https://duckduckgo.com/?q={{ item.whereabouts }}" target="_blank">{{ item.whereabouts }}</a></td>
+        <td style="text-align:center;">
+          {% if item.available %}
+            <i class="fa fa-thumbs-up" style="color:green;"></i>
+          {% else %}
+            <i class="fa fa-thumbs-down" style="color:red;"></i>
+          {% endif %}
+        </td>
         <td><a href="{% url 'get_item' item.id %}">{{ item.name }}</a></td>
         <td>{{ item.list_date | date:"d M, Y H:i:s" }}</td>
+        <td><a href="https://duckduckgo.com/?q={{ item.whereabouts }}" target="_blank">{{ item.whereabouts }}</a></td>
         <td>{{ item.ask_price_xmr }}</td>
       </tr>
       {% endfor %}

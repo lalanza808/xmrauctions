@@ -22,6 +22,8 @@ class Command(BaseCommand):
                 msg['balances'].append({
                     "index": index,
                     "address": str(account.address()),
+                    "locked_balance": float(account.balances()[0]),
+                    "unlocked_balance": float(account.balances()[1]),
                     "outgoing": [str(i) for i in account.outgoing()],
                     "incoming": [str(i) for i in account.incoming()],
                 })
@@ -32,6 +34,8 @@ class Command(BaseCommand):
                 msg['balances'].append({
                     "sale_id": sale.id,
                     "address": str(w.address()),
+                    "locked_balance": float(w.balances()[0]),
+                    "unlocked_balance": float(w.balances()[1]),
                     "outgoing": [str(i) for i in w.outgoing()],
                     "incoming": [str(i) for i in w.incoming()],
                 })

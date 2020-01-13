@@ -1,0 +1,42 @@
+{% if request.user == sale.bid.bidder %}
+  <p class="sale-info">Hello {{ sale.bid.bidder.username }},</p>
+  <p class="sale-info">
+    The seller accepted your bid and the sale process was initiated.
+    Please send funds to the below Monero escrow address (or use the QR code).
+  </p>
+  <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
+  <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
+  {% if incoming_transactions %}
+    <p class="sale-info"><strong>Incoming Payments Found</strong>:</p>
+    <ul>
+    {% for tx in incoming_transactions %}
+      <li>{{ tx.transaction.hash }} ({{ tx.amount }} XMR)</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  <img src="data:image/png;base64,{{ qrcode }}" width=200 class="center">
+  <hr>
+  <span class="wallet-text">
+  <h2>Need a Wallet?</h2>
+  <p class="sale-info">Try out these popular Monero wallet projects:</p>
+  <ul>
+    <li><a href="https://www.getmonero.org/downloads/" target="_blank">Official Community Funded Monero Software (desktop)</a></li>
+    <li><a href="https://cakewallet.com/" target="_blank">CakeWallet (iOS, Android)</a></li>
+    <li><a href="https://www.monerujo.io/" target="_blank">Monerujo (Android)</a></li>
+    <li><a href="https://mymonero.com/" target="_blank">MyMonero (Desktop, Web)</a></li>
+  </ul>
+  <h2>Change your Mind?</h2>
+  <p>You can cancel the sale and reopen the item for bidding. Any funds sent will be transferred again to your return address.</p>
+  <p><a href="{% url 'cancel_sale' sale.id %}" class="button">Cancel Sale</a></p>
+  </span>
+{% elif request.user == sale.item.owner %}
+  <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
+  <p class="sale-info">
+    You accepted bid #{{ sale.bid.id }} on your item "<a href="{% url 'get_item' sale.item.id %}">{{ sale.item.name }}</a>" (#{{ sale.item.id }}).
+    A new sale has been initiated.
+  </p>
+  <p class="sale-info">
+    We are waiting for the buyer to send funds to the escrow address.
+    No action is needed from you at this time. Stay tuned for notifications.
+  </p>
+{% endif %}

@@ -1,0 +1,36 @@
+{% if request.user == sale.bid.bidder %}
+  <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
+  <p class="sale-info">Your funds have been confirmed!</p>
+  <p class="sale-info">
+    The seller has been notified of the proof of payment and has been provided with a link to your shipping address.
+    Please make sure it is correct and will result in successful package delivery.
+    You can edit the address here: <a href="{% url 'edit_shipping' %}" target="_blank">Edit Shipping Address</a>
+  </p>
+  <p class="sale-info"><strong>Address 1</strong>: {{ shipping_address.address1 }}</p>
+  <p class="sale-info"><strong>Address 2</strong>: {{ shipping_address.address2 }}</p>
+  <p class="sale-info"><strong>City</strong>: {{ shipping_address.city }}</p>
+  <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
+  <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
+  <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
+{% elif request.user == sale.item.owner %}
+  <p class="sale-info">Congratulations {{ sale.item.owner.username }},</p>
+  <p class="sale-info">
+    The bidder for your item has sent the proper amount of funds to the escrow wallet address.
+    You may now proceed with shipping the item they agreed to purchase from you.
+    You may need to wait some time for the buyer to provide their location:
+  </p>
+  {% if shipping_address %}
+  <p class="sale-info"><strong>Address 1</strong>: {{ shipping_address.address1 }}</p>
+  <p class="sale-info"><strong>Address 2</strong>: {{ shipping_address.address2 }}</p>
+  <p class="sale-info"><strong>City</strong>: {{ shipping_address.city }}</p>
+  <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
+  <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
+  <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
+  <br>
+  <p class="sale-info">If you have shipped the item, and <strong>only if you have shipped the item</strong>, please confirm by clicking this button:</p>
+  <p class="sale-info"><a href="{% url 'confirm_shipment' sale.id %}" class="button">Confirm Item Shipped</a></p>
+  {% else %}
+  <br>
+  <p><strong>The buyer has not provided a shipping address yet - check back later!</strong></p>
+  {% endif %}
+{% endif %}

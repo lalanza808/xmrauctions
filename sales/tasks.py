@@ -135,7 +135,7 @@ def pay_sellers_on_sold_items():
         sale_total = sale.agreed_price_xmr - sale.platform_fee_xmr
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
 
-        if sale_account.balances()[1] >= Decimal(sale.agreed_price_xmr):
+        if sale_account.balances()[1] >= Decimal(str(sale.agreed_price_xmr)):
             try:
                 # Construct a transaction so we can get current fee and subtract from the total
                 _tx = sale_account.transfer(

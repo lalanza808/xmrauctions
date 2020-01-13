@@ -8,138 +8,14 @@
     <header class="minor">
       <h2>Sale #{{ sale.id }} - {{ sale.item.name }}</h2>
     </header>
-    {% if request.user == sale.bid.bidder %}
-      {% if sale.payment_received == False %}
-      <p class="sale-info">Hello {{ sale.bid.bidder.username }},</p>
-      <p class="sale-info">
-        The seller accepted your bid and the sale process was initiated.
-        Please send funds to the below Monero escrow address (or use the QR code).
-      </p>
-      <p class="sale-info"><strong>Expected Payment (XMR)</strong>: {{ sale.expected_payment_xmr }}</p>
-      <p class="sale-info"><strong>Escrow Address</strong>: {{ sale.escrow_address }}</p>
-      {% if incoming_transactions %}
-      <p class="sale-info"><strong>Incoming Payments</strong>:</p>
-      <ul>
-      {% for tx in incoming_transactions %}
-        <li>{{ tx.transaction.hash }} ({{ tx.amount }} XMR)</li>
-      {% endfor %}
-      </ul>
-      {% endif %}
-      <img src="data:image/png;base64,{{ qrcode }}" width=200 class="center">
-      <hr>
-      <span class="wallet-text">
-      <h2>Need a Wallet?</h2>
-      <p class="sale-info">Try out these popular Monero wallet projects:</p>
-      <ul>
-        <li><a href="https://www.getmonero.org/downloads/" target="_blank">Official Community Funded Monero Software (desktop)</a></li>
-        <li><a href="https://cakewallet.com/" target="_blank">CakeWallet (iOS, Android)</a></li>
-        <li><a href="https://www.monerujo.io/" target="_blank">Monerujo (Android)</a></li>
-        <li><a href="https://mymonero.com/" target="_blank">MyMonero (Desktop, Web)</a></li>
-      </ul>
-      <h2>Change your Mind?</h2>
-      <p>You can cancel the sale and reopen the item for bidding. Any funds sent will be transferred again to your return address.</p>
-      <p><a href="{% url 'cancel_sale' sale.id %}" class="button">Cancel Sale</a></p>
-      </span>
-      {% elif sale.payment_received and sale.item_shipped == False %}
-      <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
-      <p class="sale-info">Your funds have been confirmed!</p>
-      <p class="sale-info">
-        The seller has been notified of the proof of payment and has been provided with a link to your shipping address.
-        Please make sure it is correct and will result in successful package delivery.
-        You can edit the address here: <a href="{% url 'edit_shipping' %}" target="_blank">Edit Shipping Address</a>
-      </p>
-      <p class="sale-info"><strong>Address 1</strong>: {{ shipping_address.address1 }}</p>
-      <p class="sale-info"><strong>Address 2</strong>: {{ shipping_address.address2 }}</p>
-      <p class="sale-info"><strong>City</strong>: {{ shipping_address.city }}</p>
-      <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
-      <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
-      <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
-      {% elif sale.item_shipped and sale.item_received == False %}
-      <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
-      <p class="sale-info">
-        The seller has shipped the item, now you need to wait for it to arrive.
-        When it does arrive please click the button below to confirm.
-      </p>
-      <p class="sale-info">Stay tuned for updates and thanks for using {{ site_meta.name }}!</p>
-      <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
-      <hr>
-      <hr>
-      <span class="wallet-text">
-      <p>Click here when you have received your package:</p>
-      <p class="sale-info"><a href="{% url 'confirm_receipt' sale.id %}" class="button">Confirm Item Received</a></p>
-      </span>
-      {% elif sale.item_received %}
-      <p class="sale-info">Hey {{ sale.bid.bidder.username }},</p>
-      <p class="sale-info">It sounds like your order was successful. The seller will be sent their funds from the transaction out of the escrow wallet. You are good to go!</p>
-      <p class="sale-info">If you found the site useful and had a good experience, please consider donating to the developer address provided at the bottom of the page.</p>
-      <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
-      <hr>
-      <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
-      <ul>
-        <li><a href="https://github.com/lalanza808/xmrauctions">Github</a>
-        <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
-        <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
-      </ul>
-      {% endif %}
-    {% endif %}
-
-    {% if request.user == sale.item.owner %}
-      {% if sale.payment_received == False %}
-      <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
-      <p class="sale-info">
-        You accepted bid #{{ sale.bid.id }} on your item "<a href="{% url 'get_item' sale.item.id %}">{{ sale.item.name }}</a>" (#{{ sale.item.id }}).
-        A new sale has been initiated.
-      </p>
-      <p class="sale-info">
-        We are waiting for the buyer to send funds to the escrow address.
-        No action is needed from you at this time. Stay tuned for notifications.
-      </p>
-      {% elif sale.payment_received and sale.item_shipped == False %}
-      <p class="sale-info">Congratulations {{ sale.item.owner.username }},</p>
-      <p class="sale-info">
-        The bidder for your item has sent the proper amount of funds to the escrow wallet address.
-        You may now proceed with shipping the item they agreed to purchase from you.
-        You may need to wait some time for the buyer to provide their location:
-      </p>
-      {% if shipping_address %}
-      <p class="sale-info"><strong>Address 1</strong>: {{ shipping_address.address1 }}</p>
-      <p class="sale-info"><strong>Address 2</strong>: {{ shipping_address.address2 }}</p>
-      <p class="sale-info"><strong>City</strong>: {{ shipping_address.city }}</p>
-      <p class="sale-info"><strong>State</strong>: {{ shipping_address.state }}</p>
-      <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
-      <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
-      <br>
-      <p class="sale-info">If you have shipped the item, and <strong>only if you have shipped the item</strong>, please confirm by clicking this button:</p>
-      <p class="sale-info"><a href="{% url 'confirm_shipment' sale.id %}" class="button">Confirm Item Shipped</a></p>
-      {% else %}
-      <br>
-      <p><strong>The buyer has not provided a shipping address yet - check back later!</strong></p>
-      {% endif %}
-
-      {% elif sale.item_shipped and sale.item_received == False %}
-      <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
-      <p class="sale-info">You've shipped the item, now you need to wait for the buyer to confirm they received it on their end.</p>
-      <p class="sale-info">Stay tuned for updates and thanks for using {{ site_meta.name }}!</p>
-      <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
-      {% elif sale.item_received %}
-      <p class="sale-info">Hey {{ sale.item.owner.username }},</p>
-      <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!</p>
-      <p class="sale-info">Your payout address provided during item creation will be paid the accepted bid amount out of the escrow wallet. <strong>Please note, transaction fees will come out of the payout total.</strong></p>
-      <p class="sale-info"><strong>Accepted Bid (XMR)</strong>:  {{ sale.bid.bid_price_xmr }}</p>
-      <p class="sale-info"><strong>Platform Fee (XMR)</strong>:  {{ sale.platform_fee_xmr }}</p>
-      <p class="sale-info"><strong>Network Fee (XMR)</strong>:  {{ sale.network_fee_xmr }}</p>
-      <p class="sale-info"><strong>Total Payout (XMR)</strong>:  {{ total_seller_payout }}</p>
-      <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
-      <p class="sale-info"><strong>Payout Transaction ID</strong>: {{ sale.seller_payout_transaction }}</p>
-      <br>
-      <p class="sale-info">If you found the site useful and had a good experience, please consider donating to the developer address provided at the bottom of the page.</p>
-      <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
-      <hr>
-      <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
-      <li><a href="https://github.com/lalanza808/xmrauctions">Github</a>
-      <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
-      <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
-      {% endif %}
+    {% if sale.payment_received == False %}
+      {% include 'sales/get_sale/no_payment_received.html' %}
+    {% elif sale.payment_received and sale.item_shipped == False %}
+      {% include 'sales/get_sale/payment_received_not_shipped.html' %}
+    {% elif sale.item_shipped and sale.item_received == False %}
+      {% include 'sales/get_sale/shipped_not_received.html' %}
+    {% elif sale.item_received %}
+      {% include 'sales/get_sale/item_received.html' %}
     {% endif %}
   </div>
 </section>

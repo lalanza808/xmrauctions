@@ -1,0 +1,32 @@
+{% if request.user == sale.bid.bidder %}
+  <p class="sale-info">Hey {{ sale.bid.bidder.username }},</p>
+  <p class="sale-info">It sounds like your order was successful. The seller will be sent their funds from the transaction out of the escrow wallet. You are good to go!</p>
+  <p class="sale-info">If you found the site useful and had a good experience, please consider donating to the developer address provided at the bottom of the page.</p>
+  <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
+  <hr>
+  <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
+  <ul>
+    <li><a href="https://github.com/lalanza808/xmrauctions">Github</a>
+    <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
+    <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
+  </ul>
+{% elif request.user == sale.item.owner %}
+  <p class="sale-info">Hey {{ sale.item.owner.username }},</p>
+  <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!</p>
+  <p class="sale-info">Your payout address provided during item creation will be paid the accepted bid amount out of the escrow wallet. <em>Please note, transaction fees will come out of the payout total if there are no platform fees!</em></p>
+  <hr>
+  <p class="sale-info"><strong>Accepted Bid (XMR)</strong>:  {{ sale.bid.bid_price_xmr }}</p>
+  <p class="sale-info"><strong>Platform Fee (XMR)</strong>:  {{ sale.platform_fee_xmr }}</p>
+  <p class="sale-info"><strong>Network Fee (XMR)</strong>:  {{ sale.network_fee_xmr }}</p>
+  <p class="sale-info"><strong>Total Payout (XMR)</strong>:  {{ total_seller_payout }}</p>
+  <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
+  <p class="sale-info"><strong>Payout Transaction ID</strong>: {{ sale.seller_payout_transaction }}</p>
+  <br>
+  <p class="sale-info">If you found the site useful and had a good experience, please consider donating to the developer address provided at the bottom of the page.</p>
+  <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
+  <hr>
+  <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
+  <li><a href="https://github.com/lalanza808/xmrauctions">Github</a>
+  <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
+  <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
+{% endif %}

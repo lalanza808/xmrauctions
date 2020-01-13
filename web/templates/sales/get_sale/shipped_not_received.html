@@ -1,0 +1,22 @@
+{% load static %}
+
+{% if request.user == sale.bid.bidder %}
+  <p class="sale-info">Congratulations {{ sale.bid.bidder.username }},</p>
+  <p class="sale-info">
+    The seller has shipped the item, now you need to wait for it to arrive.
+    When it does arrive please click the button below to confirm.
+  </p>
+  <p class="sale-info">Stay tuned for updates and thanks for using {{ site_meta.name }}!</p>
+  <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
+  <hr>
+  <hr>
+  <span class="wallet-text">
+  <p>Click here when you have received your package:</p>
+  <p class="sale-info"><a href="{% url 'confirm_receipt' sale.id %}" class="button">Confirm Item Received</a></p>
+  </span>
+{% elif request.user == sale.item.owner %}
+  <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
+  <p class="sale-info">You've shipped the item, now you need to wait for the buyer to confirm they received it on their end.</p>
+  <p class="sale-info">Stay tuned for updates and thanks for using {{ site_meta.name }}!</p>
+  <img src="{% static 'images/monero-symbol-800.png' %}" width=200 class="center">
+{% endif %}

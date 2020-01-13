@@ -9,18 +9,18 @@
       {% if request.user.is_authenticated %}
       <a href="{% url 'list_items' %}?mine=true" class="button">Your Items</a>
       <a href="{% url 'list_items' %}" class="button alt">All Items</a>
+      {% endif %}
       <form method="GET" enctype="multipart/form-data" action="">
         {% for field in search_form %}
         <div class="fieldWrapper">
             {{ field.errors }}
             {{ field.label_tag }} {{ field }}
             {% if field.help_text %}
-            <p class="help">{{ field.help_text|safe }} <i class="fa fa-search"></i></p>
+            <p class="help">{{ field.help_text|safe }}</p>
             {% endif %}
         </div>
         {% endfor %}
       </form>
-      {% endif %}
     </header>
     <div id="item-search"></div>
     {% if items %}

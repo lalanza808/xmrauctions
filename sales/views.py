@@ -35,6 +35,9 @@ def get_sale(request, sale_id):
     address_qr = qrcode_make(qr_uri).save(_address_qr)
     total_seller_payout = sale.agreed_price_xmr - sale.platform_fee_xmr
 
+    if sale.network_fee_xmr:
+        total_seller_payout = total_seller_payout - sale.network_fee_xmr
+
     context = {
         'sale': sale,
         'qrcode': b64encode(_address_qr.getvalue()).decode(),

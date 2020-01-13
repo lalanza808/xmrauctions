@@ -122,7 +122,7 @@ def poll_for_buyer_escrow_payments():
         sale.save()
 
 
-@periodic_task(crontab(minute='*/5'))
+@periodic_task(crontab(minute='*'))
 def pay_sellers_on_sold_items():
     aw = AuctionWallet()
     if aw.connected is False:
@@ -134,12 +134,22 @@ def pay_sellers_on_sold_items():
         # Take platform fees from the sale - the 50:50 split between buyer/seller
         sale_total = sale.agreed_price_xmr - sale.platform_fee_xmr
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        logger.info(f'[INFO] Sending {sale_total} XMR from wallet account #{sale.escrow_account_index} to item owner\'s payout address for sale #{sale.id}.')
-        if sale_account.balances()[1] > Decimal(sale.agreed_price_xmr):
+
+        if sale_account.balances()[1] >= Decimal(sale.agreed_price_xmr):
             try:
-                sale_account.transfer(
-                    sale.item.payout_address, sale_total
+                # Construct a transaction so we can get current fee and subtract from the total
+                _tx = sale_account.transfer(
+                    sale.item.payout_address, Decimal(.01), relay=False
                 )
+                new_total = sale_total - float(_tx[0].fee)
+
+                logger.info(f'[INFO] Sending {new_total} XMR from wallet account #{sale.escrow_account_index} to item owner\'s payout address for sale #{sale.id}.')
+                # Make the transaction with network fee removed
+                tx = sale_account.transfer(
+                    sale.item.payout_address, new_total, relay=True
+                )
+                sale.network_fee_xmr = _tx[0].fee
+                sale.seller_payout_transaction = tx[0]
                 sale.seller_paid = True
                 sale.escrow_complete = True
                 sale.save()
@@ -175,9 +185,13 @@ def pay_platform_on_sold_items():
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
         bal = sale_account.balances()[1]
         if bal >= 0:
-            logger.info(f'[INFO] Getting platform fees of {bal} XMR')
             try:
-                sale_account.sweep_all(aof)
+                if settings.PLATFORM_FEE_PERCENT > 0:
+                    logger.info(f'[INFO] Getting platform fees of {bal} XMR')
+                    sale_account.sweep_all(aof)
+                else:
+                    logging.info('No platform fees are set - proceeding without taking fees.')
+
                 sale.platform_paid = True
                 sale.sale_finalized = True
                 sale.save()

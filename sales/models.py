@@ -12,6 +12,8 @@ class ItemSale(models.Model):
     escrow_account_index = models.IntegerField()
     agreed_price_xmr = models.FloatField()
     platform_fee_xmr = models.FloatField()
+    network_fee_xmr = models.FloatField(default=0.0)
+    seller_payout_transaction = models.CharField(max_length=150, blank=True)
     expected_payment_xmr = models.FloatField()
     received_payment_xmr = models.FloatField(default=0.0)
     escrow_period_days = models.PositiveSmallIntegerField(default=settings.ESCROW_PERIOD_DAYS)

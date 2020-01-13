@@ -13,7 +13,7 @@ class CreateItemForm(forms.ModelForm):
         help_texts = {
             'name': 'Use a succinct name for your item. Don\'t be spammy or obscene.',
             'description': 'Describe the condition of the item and any important information. Try to refrain from sharing personally identifiable information like phone numbers or social media links.',
-            'whereabouts': 'A simple pointer to your general region - a nearby ZIP code or capital city would be perfect.',
+            'whereabouts': 'A simple pointer to your general region - a nearby capital city and your state would be perfect.',
             'ask_price_xmr': 'How many moneroj do you want for your item?',
             'payout_address': 'A Monero wallet address where funds will be sent after sale is confirmed.',
         }

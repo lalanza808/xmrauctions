@@ -29,6 +29,16 @@ def health(request):
 
     return JsonResponse(context)
 
+def get_faqs(request):
+    return render(request, 'core/faqs.html')
+
+def get_privacy(request):
+    return render(request, 'core/privacy.html')
+
+def get_terms(request):
+    return render(request, 'core/terms.html')
+
+
 @login_required
 def edit_shipping(request):
     profile = UserShippingAddress.objects.filter(user=request.user).first()

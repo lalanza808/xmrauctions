@@ -1160,6 +1160,15 @@ New color: fd4e05
   list-style: none;
 }
 
+#donation-address {
+  text-align: center;
+  width: 50%;
+  overflow-wrap: break-word;
+  display: block;
+  margin: auto;
+  color: grey;
+}
+
 html {
   height: 100%;
 }

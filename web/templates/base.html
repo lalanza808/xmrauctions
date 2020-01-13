@@ -103,7 +103,15 @@
 
     <header id="header">
       <h1><a href="{% url 'home' %}">{{ site_meta.name }}</a></h1>
-      <nav id="nav"></nav>
+      <nav id="nav">
+        <ul>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout ({{ request.user }})</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+          {% endif %}
+        </ul>
+      </nav>
     </header>
 
     {% if messages %}
@@ -139,15 +147,12 @@
     <footer id="footer">
       <div class="container">
         <ul class="copyright">
-          <!-- <li>&copy; {{ site_meta.name }} 2019. All Rights Reserved.</li> -->
-        </ul>
-        <ul class="copyright">
-          <li><a href="{% static 'privacy.txt' %}">Privacy</a></li>
-          <li><a href="{% static 'terms.txt' %}">Terms</a></li>
-          <li><a href="{% static 'faq.txt' %}">FAQ</a></li>
+          <li><a href="{% url 'get_faqs' %}">Privacy</a></li>
+          <li><a href="{% url 'get_privacy' %}">Terms</a></li>
+          <li><a href="{% url 'get_terms' %}">FAQ</a></li>
         </ul>
         <br>
-        <p class="text-muted" style="text-align:center;">Donations Accepted:<br> {{ site_meta.donation_address }}</p>
+        <p id="donation-address"><strong>Donation Address</strong>:<br> {{ site_meta.donation_address }}</p>
       </div>
     </footer>
 

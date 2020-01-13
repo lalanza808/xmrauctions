@@ -7,8 +7,8 @@
   <!-- <h2>Home</h2> -->
   <ul class="actions">
     <li><a href="{% url 'create_item' %}" class="button">Sell An Item</a></li>
-    <li><a href="{% url 'list_items' %}" class="button">View Items</a></li>
     <li><a href="{% url 'list_bids' %}" class="button">View Bids</a></li>
+    <li><a href="{% url 'list_items' %}" class="button">View Items</a></li>
     <li><a href="{% url 'logout' %}" class="button">Logout ({{ request.user.username }})</a></li>
   </ul>
   {% else %}

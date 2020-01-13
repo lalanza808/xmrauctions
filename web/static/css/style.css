@@ -64,7 +64,7 @@ New color: fd4e05
 		color: #666;
 		font-weight: 300;
 		line-height: 1em;
-		margin: 0 0 1em 0;
+		margin: 0 0 .5em 0;
 	}
 
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -74,7 +74,7 @@ New color: fd4e05
 
 	h2 {
 		font-size: 1.75em;
-		line-height: 1.5em;
+		line-height: 1.2em;
 	}
 
 	h3 {
@@ -195,7 +195,7 @@ New color: fd4e05
 
 	header.major {
 		text-align: center;
-		margin-bottom: 3em;
+		margin-bottom: 2em;
 	}
 
 		header.major h2 {
@@ -760,14 +760,14 @@ New color: fd4e05
 		input[type="reset"]:hover,
 		input[type="button"]:hover,
 		.button:hover {
-			background-color: #ca3e04; /*#42b972*/;
+			background-color: #ca3e04;
 		}
 
 		input[type="submit"]:active,
 		input[type="reset"]:active,
 		input[type="button"]:active,
 		.button:active {
-			background-color: #34935a;
+			background-color: #efc5b3;
 		}
 
 		input[type="submit"].icon,
@@ -978,7 +978,7 @@ New color: fd4e05
 		background-repeat: no-repeat;
 		background-size: cover;
 		color: #ffffff;
-		padding: 16em 0em 14em;
+		padding: 12em 0em 14em;
 		text-align: center;
 	}
 
@@ -1012,7 +1012,7 @@ New color: fd4e05
 /* Wrapper */
 
 	.wrapper {
-		padding: 4em 0em 4em;
+		padding: 3em 0em 1em;
 	}
 
 		.wrapper.style1 {
@@ -1162,11 +1162,16 @@ New color: fd4e05
 
 #donation-address {
   text-align: center;
-  width: 50%;
+  width: 100%;
   overflow-wrap: break-word;
   display: block;
   margin: auto;
   color: grey;
+}
+
+.search-bar {
+  margin-top: 1.2em;
+  display: block;
 }
 
 html {

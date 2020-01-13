@@ -1,10 +1,11 @@
+from django.db.models import Q
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms import inlineformset_factory
-from items.forms import CreateItemForm
+from items.forms import CreateItemForm, SearchItemForm
 from items.models import Item, ItemImage
 from bids.models import ItemBid
 from sales.models import ItemSale
@@ -12,14 +13,22 @@ from sales.models import ItemSale
 
 def list_items(request):
     page_query = request.GET.get('page', 1)
-    user_query = request.GET.get('user', 0)
-    item_list = Item.objects.all().order_by('-list_date')
+    mine_query = request.GET.get('mine')
+    search_form = SearchItemForm(request.GET or None)
 
-    # If the user query string resolves to real user, show their items, otherwise show all
-    if user_query:
-        user = User.objects.filter(id=user_query).first()
-        if user:
-            item_list = Item.objects.filter(owner=user).order_by('-list_date')
+    # If the 'mine_query' query string is present, show the user's items
+    if mine_query and request.user.is_authenticated:
+        item_list = Item.objects.filter(owner=request.user).order_by('-list_date')
+    # If 'search_form' query string is present, retrieve matches containing it's data
+    elif search_form.is_valid():
+        search_form.process()
+        item_list = Item.objects.filter(
+            Q(name__icontains=search_form.cleaned_data.get('search')) |
+            Q(whereabouts__icontains=search_form.cleaned_data.get('search')) |
+            Q(description__icontains=search_form.cleaned_data.get('search'))
+        )
+    else:
+        item_list = Item.objects.all().order_by('-list_date')
 
     paginator = Paginator(item_list, 20)
 
@@ -31,7 +40,8 @@ def list_items(request):
         items = paginator.page(paginator.num_pages)
 
     context = {
-        'items': items
+        'items': items,
+        'search_form': search_form
     }
 
     return render(request, 'items/list_items.html', context)

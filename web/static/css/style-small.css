@@ -69,3 +69,7 @@
 			padding-left: 0;
 			display: block;
 		}
+
+#donation-address {
+  width: 90%;
+}

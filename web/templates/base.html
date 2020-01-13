@@ -78,6 +78,14 @@
   					position: 'top-right',
   					side: 'right',
   					width: 250
+  				},
+  				navButton: {
+  					breakpoints: 'medium',
+  					height: '4em',
+            html: '<span class="toggle" data-action="toggleLayer" data-args="navPanel"></span>',
+  					position: 'top-right',
+  					side: 'top',
+  					width: '6em'
   				}
   			}
   		}
@@ -105,6 +113,7 @@
       <h1><a href="{% url 'home' %}">{{ site_meta.name }}</a></h1>
       <nav id="nav">
         <ul>
+          <li><a href="{% url 'list_items' %}">View Items</a></li>
           {% if user.is_authenticated %}
             <li><a href="{% url 'logout' %}">Logout ({{ request.user }})</a></li>
           {% else %}
@@ -151,7 +160,7 @@
           <li><a href="{% url 'get_privacy' %}">Terms</a></li>
           <li><a href="{% url 'get_terms' %}">FAQ</a></li>
         </ul>
-        <br>
+        <hr>
         <p id="donation-address"><strong>Donation Address</strong>:<br> {{ site_meta.donation_address }}</p>
       </div>
     </footer>

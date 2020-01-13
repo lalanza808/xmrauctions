@@ -5,8 +5,24 @@
 <section id="main" class="wrapper">
   <div class="container">
     <header class="major">
-      <h2>Browse Items</h2>
+      <h2>View Items</h2>
+      <a href="{% url 'list_items' %}?mine=true" class="button">Your Items</a>
+      <a href="{% url 'list_items' %}" class="button alt">All Items</a>
+      <form method="GET" enctype="multipart/form-data" action="">
+        {% for field in search_form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }} <i class="fa fa-search"></i></p>
+            {% endif %}
+        </div>
+        {% endfor %}
+      </form>
+
     </header>
+    <div id="item-search"></div>
+    {% if items %}
     <table class="table">
       <tr>
         <th>ID</th>
@@ -16,7 +32,7 @@
         <th>Asking Price (XMR)</th>
       </tr>
       {% for item in items %}
-      <tr>
+      <tr class="{% if item.owner == request.user %}item-mine{% endif %}">
         <td>#{{ item.id }}</td>
         <td><a href="https://duckduckgo.com/?q={{ item.whereabouts }}" target="_blank">{{ item.whereabouts }}</a></td>
         <td><a href="{% url 'get_item' item.id %}">{{ item.name }}</a></td>
@@ -25,13 +41,16 @@
       </tr>
       {% endfor %}
     </table>
+    {% else %}
+    <p>No results from the search. Try again!</p>
+    {% endif %}
   </div>
 </section>
 
 {% if items.has_other_pages %}
 <ul class="pagination">
   {% if items.has_previous %}
-    <li><a href="?page={{ items.previous_page_number }}">&laquo;</a></li>
+    <li><a href="?{{ request.GET.urlencode }}&page={{ items.previous_page_number }}">&laquo;</a></li>
   {% else %}
     <li class="disabled"><span>&laquo;</span></li>
   {% endif %}
@@ -39,11 +58,11 @@
     {% if items.number == i %}
       <li class="active"><span>{{ i }} <span class="sr-only"></span></span></li>
     {% else %}
-      <li><a href="?page={{ i }}">{{ i }}</a></li>
+      <li><a href="?{{ request.GET.urlencode }}&page={{ i }}">{{ i }}</a></li>
     {% endif %}
   {% endfor %}
   {% if items.has_next %}
-    <li><a href="?page={{ items.next_page_number }}">&raquo;</a></li>
+    <li><a href="?{{ request.GET.urlencode}}&page={{ items.next_page_number }}">&raquo;</a></li>
   {% else %}
     <li class="disabled"><span>&raquo;</span></li>
   {% endif %}

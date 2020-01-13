@@ -40,3 +40,6 @@ deploy-static: ## Collect static
 
 deploy-migrations: ## Run migrations
 	docker run --rm --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py migrate
+
+deploy-manage: ## Run management commands
+	docker run --rm --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py $(CMD)

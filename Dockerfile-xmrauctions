@@ -5,7 +5,7 @@ RUN apt-get install python3 python3-venv -y
 COPY requirements.txt /tmp/requirements.txt
 RUN python3 -m venv /tmp/venv && /tmp/venv/bin/pip install -r /tmp/requirements.txt
 COPY . /srv/xmrauctions
-RUN cp -r /tmp/venv/ /srv/xmrauctions/.venv
+RUN ln -s /tmp/venv/ /srv/xmrauctions/.venv/
 RUN useradd -s /bin/bash -d /srv/xmrauctions xmrauctions
 RUN chown -R xmrauctions:xmrauctions /srv/xmrauctions
 RUN chmod +x /srv/xmrauctions/bin/*

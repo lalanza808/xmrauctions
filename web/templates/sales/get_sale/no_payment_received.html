@@ -13,7 +13,8 @@
       <li>{{ tx.transaction.hash }} ({{ tx.amount }} XMR)</li>
     {% endfor %}
     </ul>
-  {% endif %}
+    <p>Once the payments are confirmed for 10 blocks the transaction will continue.</p>
+  {% else %}
   <img src="data:image/png;base64,{{ qrcode }}" width=200 class="center">
   <hr>
   <span class="wallet-text">
@@ -29,6 +30,7 @@
   <p>You can cancel the sale and reopen the item for bidding. Any funds sent will be transferred again to your return address.</p>
   <p><a href="{% url 'cancel_sale' sale.id %}" class="button">Cancel Sale</a></p>
   </span>
+  {% endif %}
 {% elif request.user == sale.item.owner %}
   <p class="sale-info">Hello {{ sale.item.owner.username }},</p>
   <p class="sale-info">

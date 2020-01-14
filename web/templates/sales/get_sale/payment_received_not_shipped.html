@@ -27,8 +27,10 @@
   <p class="sale-info"><strong>Country</strong>: {{ shipping_address.country }}</p>
   <p class="sale-info"><strong>Zip</strong>: {{ shipping_address.zip }}</p>
   <br>
-  <p class="sale-info">If you have shipped the item, and <strong>only if you have shipped the item</strong>, please confirm by clicking this button:</p>
-  <p class="sale-info"><a href="{% url 'confirm_shipment' sale.id %}" class="button">Confirm Item Shipped</a></p>
+  <span class="wallet-text">
+    <p class="sale-info">If you have shipped the item, and <strong>only if you have shipped the item</strong>, please confirm by clicking this button:</p>
+    <p class="sale-info"><a href="{% url 'confirm_shipment' sale.id %}" class="button">Confirm Item Shipped</a></p>
+  </span>
   {% else %}
   <br>
   <p><strong>The buyer has not provided a shipping address yet - check back later!</strong></p>

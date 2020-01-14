@@ -85,7 +85,6 @@ def create_item(request):
             for err in form_errors:
                 err_data = form_errors[err][0]
                 messages.error(request, f'{err}: {err_data["message"]}')
-            return HttpResponseRedirect(reverse('create_item'))
 
     context = {
         'form': CreateItemForm(request.POST or None),
@@ -128,14 +127,13 @@ def edit_item(request, item_id):
             for err in form_errors:
                 err_data = form_errors[err][0]
                 messages.error(request, f'{err}: {err_data["message"]}')
-            return HttpResponseRedirect(reverse('get_item', args=[item_id]))
-    else:
-        context = {
-            'form': CreateItemForm(instance=item),
-            'formset': ItemImageFormSet(instance=item)
-        }
 
-        return render(request, 'items/edit_item.html', context)
+    context = {
+        'form': CreateItemForm(instance=item),
+        'formset': ItemImageFormSet(instance=item)
+    }
+
+    return render(request, 'items/edit_item.html', context)
 
 @login_required
 def delete_item(request, item_id):

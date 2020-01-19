@@ -7,3 +7,7 @@ __pycache__
 /data
 /media
 .coverage
+htmlcov/
+.coverage.*
+coverage.xml
+*.cover

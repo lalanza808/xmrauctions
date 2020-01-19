@@ -21,7 +21,6 @@ def list_items(request):
         item_list = Item.objects.filter(owner=request.user).order_by('-list_date')
     # If 'search_form' query string is present, retrieve matches containing it's data
     elif search_form.is_valid():
-        search_form.process()
         item_list = Item.objects.filter(
             Q(name__icontains=search_form.cleaned_data.get('search')) |
             Q(whereabouts__icontains=search_form.cleaned_data.get('search')) |

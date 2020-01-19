@@ -32,11 +32,7 @@ class ItemImage(models.Model):
 
     def save(self, *args, **kwargs):
         self.correct_image()
-        self.copy_to_storage()
         super(ItemImage, self).save(*args, **kwargs)
-
-    def copy_to_storage(self):
-        pass
 
     def correct_image(self):
         try:
@@ -100,4 +96,4 @@ class ItemImage(models.Model):
             raise Exception('Unable to correct image size')
 
     def __str__(self):
-        return f"{self.id} - {self.item.name} - {self.id}"
+        return f'{self.id} - {self.item.name} - {self.id}'

@@ -28,5 +28,3 @@ class SearchItemForm(forms.Form):
         )
     )
 
-    def process(self):
-        cd = self.cleaned_data

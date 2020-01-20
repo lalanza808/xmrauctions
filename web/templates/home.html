@@ -46,6 +46,28 @@
         <p>Difficulty:<br>{{ daemon_info.difficulty }}</p>
       </section>
     </div>
+    {% if monero_info %}
+    <div class="row 200%">
+      <section class="2u 12u$(small)">
+        <p>Genesis Date:<br>{{ monero_info.genesis_date }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Market Cap Rank:<br>{{ monero_info.market_cap_rank }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Current Price (USD):<br>$ {{ monero_info.current_price }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Market Cap (USD):<br>{{ monero_info.market_cap }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Total Volume (USD):<br>$ {{ monero_info.total_volume }}</p>
+      </section>
+      <section class="2u 12u$(small)">
+        <p>Last Updated:<br>{{ monero_info.last_updated }}</p>
+      </section>
+    </div>
+    {% endif %}
     {% else %}
     <p class="text-muted">Daemon is not connected; statistics unavailable.</p>
     {% endif %}

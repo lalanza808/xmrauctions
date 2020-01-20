@@ -10,15 +10,19 @@ from core.monero import AuctionDaemon, AuctionWallet
 
 def home(request):
     daemon_info = cache.get('daemon_info', None)
+    monero_info = cache.get('monero_info', None)
 
     if daemon_info is None:
         d = AuctionDaemon()
         if d.connected:
-            daemon_info = AuctionDaemon().daemon.info()
-        else:
-            daemon_info = False
+            daemon_info = d.daemon.info()
 
-    return render(request, 'home.html', {'daemon_info': daemon_info})
+    context = {
+        'daemon_info': daemon_info,
+        'monero_info': monero_info
+    }
+
+    return render(request, 'home.html', context)
 
 def health(request):
     daemon = AuctionDaemon()

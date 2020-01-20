@@ -1,20 +1,22 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.cache import cache
 from core.forms import UserShippingAddressForm
 from core.models import UserShippingAddress
 from core.monero import AuctionDaemon, AuctionWallet
 
 
 def home(request):
-    daemon = AuctionDaemon()
+    daemon_info = cache.get('daemon_info', None)
 
-    if daemon.connected:
-        daemon_info = daemon.daemon.info()
-    else:
-        daemon_info = False
+    if daemon_info is None:
+        d = AuctionDaemon()
+        if d.connected:
+            daemon_info = AuctionDaemon().daemon.info()
+        else:
+            daemon_info = False
 
     return render(request, 'home.html', {'daemon_info': daemon_info})
 

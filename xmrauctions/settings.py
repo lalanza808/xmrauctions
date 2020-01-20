@@ -102,6 +102,7 @@ DATABASES = {
 
 CACHE_HOST = os.environ.get('CACHE_HOST', 'localhost')
 CACHE_PORT = os.environ.get('CACHE_PORT', 6379)
+CACHE_TTL = os.environ.get('CACHE_TTL', 3600)
 
 CACHES = {
     'default': {

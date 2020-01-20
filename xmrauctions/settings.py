@@ -253,4 +253,4 @@ if aw.connected is True:
     platform_wallet_address = str(aw.wallet.accounts[0].address())
 
 PLATFORM_WALLET_ADDRESS = os.environ.get('PLATFORM_WALLET_ADDRESS', platform_wallet_address)
-DONATION_WALLET_ADDRESS = os.environ.get('DONATION_ADDRESS', PLATFORM_WALLET_ADDRESS)
+TIP_WALLET_ADDRESS = os.environ.get('TIP_ADDRESS', PLATFORM_WALLET_ADDRESS)

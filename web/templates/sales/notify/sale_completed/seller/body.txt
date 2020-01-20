@@ -2,6 +2,6 @@ Congratulations {{ sale.item.owner }},
 
 The sale of your item, "{{ sale.item.name }}" (#{{ sale.item.id }}), has concluded. The agreed upon bid price minus any network fees has been transferred to the payout address provided when posting the item.
 
-In a few more minutes post-processing will complete, the platform will collect any fees, and the sale, item, and bids will all be removed from the system. If you had a good experience, please consider donating to the development fund. The address can be found at the bottom of the {{ site_name }} site pages.
+In a few more minutes post-processing will complete, the platform will collect any fees, and the sale, item, and bids will all be removed from the system. If you had a good experience, please consider sending a tip to the development fund. The address can be found at the bottom of the {{ site_name }} site pages.
 
 Thanks for using {{ site_name }}!

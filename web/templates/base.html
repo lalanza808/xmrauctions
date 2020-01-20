@@ -156,12 +156,12 @@
     <footer id="footer">
       <div class="container">
         <ul class="copyright">
-          <li><a href="{% url 'get_faqs' %}">Privacy</a></li>
-          <li><a href="{% url 'get_privacy' %}">Terms</a></li>
-          <li><a href="{% url 'get_terms' %}">FAQ</a></li>
+          <li><a href="{% url 'get_privacy' %}">Privacy</a></li>
+          <li><a href="{% url 'get_terms' %}">Terms</a></li>
+          <li><a href="{% url 'get_faqs' %}">FAQ</a></li>
         </ul>
         <hr>
-        <p id="donation-address"><strong>Donation Address</strong>:<br> {{ site_meta.donation_address }}{% if site_meta.debug %} (stage){% endif %}</p>
+        <p id="tip-address"><strong>Tip Address</strong>:<br> {{ site_meta.tip_address }}{% if site_meta.debug %} (stage){% endif %}</p>
       </div>
     </footer>
 

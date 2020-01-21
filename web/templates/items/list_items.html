@@ -8,6 +8,7 @@
       <h2>View Items</h2>
       {% if request.user.is_authenticated %}
       <a href="{% url 'list_items' %}?mine=true" class="button">Your Items</a>
+      <a href="{% url 'list_items' %}?{{ request.GET.urlencode }}&avail=true" class="button alt">Available Items</a>
       <a href="{% url 'list_items' %}" class="button alt">All Items</a>
       {% endif %}
       <form method="GET" enctype="multipart/form-data" action="">

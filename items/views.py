@@ -14,6 +14,7 @@ from sales.models import ItemSale
 def list_items(request):
     page_query = request.GET.get('page', 1)
     mine_query = request.GET.get('mine')
+    avail_query = request.GET.get('avail')
     search_form = SearchItemForm(request.GET or None)
 
     # If the 'mine_query' query string is present, show the user's items
@@ -25,9 +26,12 @@ def list_items(request):
             Q(name__icontains=search_form.cleaned_data.get('search')) |
             Q(whereabouts__icontains=search_form.cleaned_data.get('search')) |
             Q(description__icontains=search_form.cleaned_data.get('search'))
-        )
+        ).order_by('-list_date')
     else:
         item_list = Item.objects.all().order_by('-list_date')
+
+    if avail_query:
+        item_list = item_list.filter(available=True).order_by('-list_date')
 
     paginator = Paginator(item_list, 20)
 

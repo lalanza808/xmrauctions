@@ -153,10 +153,10 @@ def refund_buyers_on_cancelled_sales() -> bool:
                 return False
         else:
             if cache.get(f'{sale.id}_sale_refund_tries'):
-                logger.info(f'[INFO] Balance for sale #{sale.id} is 0. Marking payment_refunded flag.')
+                logger.info(f'[INFO] Balance for sale #{sale.id} is 0 still. Marking payment_refunded flag.')
                 sale.payment_refunded = True
                 sale.save()
                 return True
             else:
                 logger.info(f'[INFO] Setting flag in cache for sale #{sale.id} to try another block cycle for good measure.')
-                cache.set(f'{sale.id}_sale_refund_tries', {}, settings.CACHE_TTL)
+                cache.set(f'{sale.id}_sale_refund_tries', {"tries": 1}, settings.CACHE_TTL)

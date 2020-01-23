@@ -4,13 +4,6 @@
   <p class="sale-info">It sounds like your order was successful. The seller will be sent their funds from the transaction out of the escrow wallet. You are good to go!</p>
   <p class="sale-info">If you found the site useful and had a good experience, please consider sending a tip to the developer address provided at the bottom of the page.</p>
   <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
-  <hr>
-  <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
-  <ul>
-    <li><a href="https://github.com/lalanza808/xmrauctions">Github</a>
-    <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
-    <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
-  </ul>
 {% elif request.user == sale.item.owner %}
   <p class="sale-info">Hey {{ sale.item.owner.username }},</p>
   <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!</p>
@@ -22,13 +15,16 @@
   <p class="sale-info"><strong>Network Fee (XMR)</strong>:  {{ sale.network_fee_xmr }}</p>
   <p class="sale-info"><strong>Total Payout (XMR)</strong>:  {{ total_seller_payout }}</p>
   <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
-<p class="sale-info"><strong>Payout Transaction ID</strong>: <a href="{{ sale.seller_payout_transaction | search_block_explorer }}">{{ sale.seller_payout_transaction }}</a></p>
+  <p class="sale-info"><strong>Payout Transaction ID</strong>: <a href="{{ sale.seller_payout_transaction | search_block_explorer }}">{{ sale.seller_payout_transaction }}</a></p>
   <br>
   <p class="sale-info">If you found the site useful and had a good experience, please consider sending a tip to the developer address provided at the bottom of the page.</p>
   <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>
-  <hr>
-  <p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
-  <li><a href="https://github.com/lalanza808/xmrauctions">Github</a>
-  <li><a href="https://twitter.com/lza_menace">Twitter</a></li>
-  <li><a href="https://www.reddit.com/user/catacombkid1">Reddit</a></li>
 {% endif %}
+
+<hr>
+<p class="sale-info">Please provide me with any feedback so I can make the process better in the future.</p>
+<ul>
+  <li><a href="https://github.com/lalanza808/xmrauctions" target="_blank">Github (@lalanza808)</a>
+  <li><a href="https://twitter.com/lza_menace" target="_blank">Twitter (@lza_menace)</a></li>
+  <li><a href="https://riot.im/app/#/room/#monero:matrix.org" target="_blank">IRC (@lza_menace)</a></li>
+</ul>

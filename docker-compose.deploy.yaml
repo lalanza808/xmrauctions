@@ -13,6 +13,6 @@ services:
     env_file:
       - .env
     image: xmrauctions:latest
-    command: ["./manage.py", "run_huey"]
+    command: ["./manage.py", "run_huey", "-q"]
     depends_on:
       - "db"

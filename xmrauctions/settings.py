@@ -29,6 +29,11 @@ ESCROW_PERIOD_DAYS = os.environ.get('ESCROW_PERIOD_DAYS', 30)
 PLATFORM_FEE_PERCENT = os.environ.get('PLATFORM_FEE_PERCENT', 0)
 BLOCK_CONFIRMATIONS_RCV = os.environ.get('BLOCK_CONFIRMATIONS_RCV', 3)
 
+if DEBUG:
+    BLOCK_EXPLORER = 'https://community.xmr.to/explorer/stagenet/'
+else:
+    BLOCK_EXPLORER = 'https://community.xmr.to/explorer/mainnet/'
+
 
 # Application definition
 

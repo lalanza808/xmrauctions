@@ -3,6 +3,7 @@ from decimal import Decimal
 from huey import crontab
 from huey.contrib.djhuey import periodic_task
 from django.conf import settings
+from django.core.cache import cache
 from core.monero import AuctionWallet
 from sales.models import ItemSale
 
@@ -106,22 +107,56 @@ def pay_platform_on_sold_items():
         else:
             logger.warning(f'[WARNING] Not enough unlocked funds available in account #{sale.escrow_account_index} for sale #{sale.id}.')
 
-@periodic_task(crontab(minute='*'))
-def closed_cancelled_sales():
+@periodic_task(crontab(minute='*/4'))
+def refund_buyers_on_cancelled_sales() -> bool:
+    """
+    Issue a refund to the buyer if they sent money but then cancelled the sale.
+
+    :rtype: bool
+    """
     aw = AuctionWallet()
     if aw.connected is False:
         logging.error('[ERROR] Auction wallet is not connected. Quitting.')
         return False
 
-    item_sales = ItemSale.objects.filter(sale_cancelled=True)
+    item_sales = ItemSale.objects.filter(sale_cancelled=True, payment_refunded=False)
     for sale in item_sales:
-        logger.info(f'[INFO] Deleting sale #{sale.id} and transferring back any sent funds to the buyer.')
+        logger.info(f'[INFO] Refunding any sent funds from the buyer for sale #{sale.id}.')
+        sale_total = sale.agreed_price_xmr - sale.platform_fee_xmr
         sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        if sale_account.balances()[0] > Decimal(0.0):
+        balances = sale_account.balances()
+        logger.info(f'[INFO] Found balances of {balances} XMR for sale #{sale.id}.')
+        if balances[0] != balances[1]:
+            logger.info(f'[INFO] Balances not yet equal. Waiting')
+            return False
+        elif balances[1] > Decimal(0.0):
             try:
-                sale_account.sweep_all(sale.bid.return_address)
-                sale.delete()
+                # Construct a transaction so we can get current fee and subtract from the total
+                _tx = sale_account.transfer(
+                    sale.bid.return_address, Decimal(.01), relay=False
+                )
+                new_total = sale_total - float(_tx[0].fee)
+                logger.info('[INFO] Refunding {new_total} XMR from wallet account #{sale.escrow_account_index} to buyer\'s return address for sale #{sale.id}.')
+                # Make the transaction with network fee removed
+                tx = sale_account.transfer(
+                    sale.bid.return_address, new_total, relay=True
+                )
+                if tx:
+                    sale.payment_refunded = True
+                    sale.save()
+                    logger.info(f'[INFO] Balance returned to buyer for sale #{sale.id}.')
+                    return True
+                else:
+                    return False
             except Exception as e:
-                logger.error(f'[ERROR] Unable to return funds to use for sale #{sale.id}.')
+                logger.error(f'[ERROR] Unable to return funds to use for sale #{sale.id}: {e}')
+                return False
         else:
-            sale.delete()
+            if cache.get(f'{sale.id}_sale_refund_tries'):
+                logger.info(f'[INFO] Balance for sale #{sale.id} is 0. Marking payment_refunded flag.')
+                sale.payment_refunded = True
+                sale.save()
+                return True
+            else:
+                logger.info(f'[INFO] Setting flag in cache for sale #{sale.id} to try another block cycle for good measure.')
+                cache.set(f'{sale.id}_sale_refund_tries', {}, settings.CACHE_TTL)

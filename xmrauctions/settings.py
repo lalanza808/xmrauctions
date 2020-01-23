@@ -27,6 +27,7 @@ DEBUG = os.environ.get('DEBUG', False)
 ALLOWED_HOSTS = str(os.environ['ALLOWED_HOSTS']).split(',')
 ESCROW_PERIOD_DAYS = os.environ.get('ESCROW_PERIOD_DAYS', 30)
 PLATFORM_FEE_PERCENT = os.environ.get('PLATFORM_FEE_PERCENT', 0)
+BLOCK_CONFIRMATIONS_RCV = os.environ.get('BLOCK_CONFIRMATIONS_RCV', 3)
 
 
 # Application definition

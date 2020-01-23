@@ -15,6 +15,7 @@
   <p class="sale-info">The buyer confirmed receipt of their shipment which means things worked out. It's time for you to get paid!</p>
   <p class="sale-info">Your payout address provided during item creation will be paid the accepted bid amount out of the escrow wallet. <em>Please note, transaction fees will come out of the payout total if there are no platform fees!</em></p>
   <hr>
+  <p class="sale-info"><strong>Payout Sent</strong>:  {{ sale.seller_paid }}</p>
   <p class="sale-info"><strong>Accepted Bid (XMR)</strong>:  {{ sale.bid.bid_price_xmr }}</p>
   <p class="sale-info"><strong>Platform Fee (XMR)</strong>:  {{ sale.platform_fee_xmr }}</p>
   <p class="sale-info"><strong>Network Fee (XMR)</strong>:  {{ sale.network_fee_xmr }}</p>

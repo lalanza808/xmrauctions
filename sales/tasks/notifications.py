@@ -1,4 +1,4 @@
-import logging
+from logging import getLogger
 from huey import crontab
 from huey.contrib.djhuey import periodic_task
 from core.helpers.email_template import EmailTemplate
@@ -6,7 +6,7 @@ from core.models import UserShippingAddress
 from sales.models import ItemSale
 
 
-logger = logging.getLogger('django.server')
+logger = getLogger('django.server')
 
 @periodic_task(crontab(minute='*'))
 def notify_buyer_of_pending_sale():
@@ -51,4 +51,18 @@ def notify_buyer_of_shipment_confirmation():
         bidder_profile.delete()
         logger.info(f'[INFO] Buyer shipping info wiped for sale #{sale.id}')
         sale.buyer_notified_of_shipment = True
+        sale.save()
+
+@periodic_task(crontab(minute='*'))
+def notify_seller_of_sale_completed():
+    item_sales = ItemSale.objects.filter(seller_paid=True).filter(seller_notified_of_payout=False)
+    for sale in item_sales:
+        logger.info(f'[INFO] Sale completed for #{sale.id}, notifying seller along with payout details.')
+        email_template = EmailTemplate(
+            item=sale,
+            scenario='sale_completed',
+            role='seller'
+        )
+        email_template.send()
+        sale.seller_notified_of_payout = True
         sale.save()

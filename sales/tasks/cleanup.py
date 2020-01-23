@@ -3,6 +3,7 @@ from huey import crontab
 from huey.contrib.djhuey import periodic_task
 from sales.models import ItemSale
 
+
 logger = getLogger('django.server')
 
 @periodic_task(crontab(minute='0', hour='*/12'))

@@ -4,44 +4,54 @@ from huey import crontab
 from huey.contrib.djhuey import periodic_task
 from django.conf import settings
 from django.core.cache import cache
-from core.monero import AuctionWallet
+from core.monero import AuctionWallet, AuctionDaemon
 from sales.models import ItemSale
 
 
 logger = logging.getLogger('django.server')
 
-@periodic_task(crontab(minute='*/3'))
-def poll_for_buyer_escrow_payments():
-    aw = AuctionWallet()
-    if aw.connected is False:
-        logging.error('[ERROR] Auction wallet is not connected. Quitting.')
+def connect_rpc(rpc_type):
+    if rpc_type == "daemon":
+        rpc = AuctionDaemon()
+    elif rpc_type == "wallet":
+        rpc = AuctionWallet()
+    else:
+        logger.error('[ERROR] Invalid RPC type specified. Use "daemon" or "wallet"')
         return False
+    if rpc.connected is False:
+        logging.error(f'[ERROR] Auction {rpc_type} is not connected. Stopping task.')
+        return False
+    return rpc
 
+@periodic_task(crontab(minute='*/2'))
+def poll_for_buyer_escrow_payments():
+    wallet_rpc = connect_rpc("wallet")
     item_sales = ItemSale.objects.filter(payment_received=False)
     for sale in item_sales:
         logger.info(f'[INFO] Polling escrow address #{sale.escrow_account_index} for sale #{sale.id} for new funds.')
-        sale_account = aw.wallet.accounts[sale.escrow_account_index]
-        unlocked = sale_account.balances()[1]
-        sale.received_payment_xmr = unlocked
-        if unlocked >= Decimal(str(sale.expected_payment_xmr)):
-            logger.info(f'[INFO] Found payment of {sale.received_payment_xmr} XMR for sale #{sale.id}.')
-            sale.payment_received = True
+        sale_account = wallet_rpc.wallet.accounts[sale.escrow_account_index]
+        tx_in = sale_account.incoming()
+        balances = sale_account.balances()
+        sale.received_payment_xmr = balances[0]
+        if balances[0] >= Decimal(str(sale.expected_payment_xmr)) and tx_in:
+            logger.info(f'[INFO] Found incoming transaction {tx_in[0].transaction} of {sale.received_payment_xmr} XMR for sale #{sale.id}.')
+            if tx_in[0].transaction.confirmations >= settings.BLOCK_CONFIRMATIONS_RCV:
+                logger.info(f'[INFO] The incoming transaction has {settings.BLOCK_CONFIRMATIONS_RCV} confirmations and enough funds. Marking payment received.')
+                sale.payment_received = True
+            else:
+                logger.info(f'[INFO] The incoming transaction only has {tx_in[0].transaction.confirmations} confirmations. Not enough to proceed.')
 
         sale.save()
 
-@periodic_task(crontab(minute='*/3'))
+@periodic_task(crontab(minute='*/4'))
 def pay_sellers_on_sold_items():
-    aw = AuctionWallet()
-    if aw.connected is False:
-        logging.error('[ERROR] Auction wallet is not connected. Quitting.')
-        return False
-
+    wallet_rpc = connect_rpc("wallet")
     item_sales = ItemSale.objects.filter(item_received=True, payment_received=True).filter(seller_paid=False)
     for sale in item_sales:
         # Take platform fees from the sale - the 50:50 split between buyer/seller
         sale_total = sale.agreed_price_xmr - sale.platform_fee_xmr
-        sale_account = aw.wallet.accounts[sale.escrow_account_index]
-
+        sale_account = wallet_rpc.wallet.accounts[sale.escrow_account_index]
+        logger.info(f'[INFO] Seller needs to be paid for sale #{sale.id}. Found balances of {sale_account.balances()} in account #{sale.escrow_account_index}.')
         if sale_account.balances()[1] >= Decimal(str(sale.agreed_price_xmr)):
             try:
                 # Construct a transaction so we can get current fee and subtract from the total
@@ -64,31 +74,17 @@ def pay_sellers_on_sold_items():
         else:
             logger.warning(f'[WARNING] Not enough unlocked funds available in account #{sale.escrow_account_index} for sale #{sale.id}.')
 
-        if sale.seller_paid and sale.seller_notified_of_payout is False:
-            email_template = EmailTemplate(
-                item=sale,
-                scenario='sale_completed',
-                role='seller'
-            )
-            sent = email_template.send()
-            sale.seller_notified_of_payout = True
-            sale.save()
-
 @periodic_task(crontab(minute='*/30'))
 def pay_platform_on_sold_items():
-    aw = AuctionWallet()
-    if aw.connected is False:
-        logging.error('[ERROR] Auction wallet is not connected. Quitting.')
-        return False
-
+    wallet_rpc = connect_rpc("wallet")
     aof = settings.PLATFORM_WALLET_ADDRESS
     if aof is None:
-        aof = str(aw.wallet.accounts[0].address())
+        aof = str(wallet_rpc.wallet.accounts[0].address())
 
     item_sales = ItemSale.objects.filter(escrow_complete=True, seller_paid=True, item_received=True).filter(platform_paid=False)
     for sale in item_sales:
         logger.info(f'[INFO] Paying platform fees for sale #{sale.id} to wallet {aof}.')
-        sale_account = aw.wallet.accounts[sale.escrow_account_index]
+        sale_account = wallet_rpc.wallet.accounts[sale.escrow_account_index]
         bal = sale_account.balances()[1]
         if bal >= 0:
             try:
@@ -114,16 +110,12 @@ def refund_buyers_on_cancelled_sales() -> bool:
 
     :rtype: bool
     """
-    aw = AuctionWallet()
-    if aw.connected is False:
-        logging.error('[ERROR] Auction wallet is not connected. Quitting.')
-        return False
-
+    wallet_rpc = connect_rpc("wallet")
     item_sales = ItemSale.objects.filter(sale_cancelled=True, payment_refunded=False)
     for sale in item_sales:
         logger.info(f'[INFO] Refunding any sent funds from the buyer for sale #{sale.id}.')
         sale_total = sale.agreed_price_xmr - sale.platform_fee_xmr
-        sale_account = aw.wallet.accounts[sale.escrow_account_index]
+        sale_account = wallet_rpc.wallet.accounts[sale.escrow_account_index]
         balances = sale_account.balances()
         logger.info(f'[INFO] Found balances of {balances} XMR for sale #{sale.id}.')
         if balances[0] != balances[1]:

@@ -1,3 +1,4 @@
+{% load search_block_explorer %}
 {% if request.user == sale.bid.bidder %}
   <p class="sale-info">Hello {{ sale.bid.bidder.username }},</p>
   <p class="sale-info">
@@ -10,7 +11,10 @@
     <p class="sale-info"><strong>Incoming Payments Found</strong>:</p>
     <ul>
     {% for tx in incoming_transactions %}
-      <li>{{ tx.transaction.hash }} ({{ tx.amount }} XMR)</li>
+      <li>
+        <a href="{{ tx.transaction.hash | search_block_explorer }}">{{ tx.transaction.hash }}</a>
+        ({{ tx.amount }} XMR) - {{ tx.transaction.confirmations }} confirmation(s)
+      </li>
     {% endfor %}
     </ul>
     <p>Once the payments are confirmed for {{ site_meta.block_confirmations }} blocks the transaction will continue.</p>

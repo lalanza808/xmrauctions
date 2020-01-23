@@ -1,1 +1,1 @@
-from items.tasks import cleanup
+from items.tasks import cleanup, notifications

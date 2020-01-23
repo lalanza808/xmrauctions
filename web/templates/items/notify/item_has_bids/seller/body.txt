@@ -1,0 +1,9 @@
+Congratulations {{ item.owner }},
+
+Your item, "{{ item.name }}" (#{{ item.id }}), has received {{ item.bids.values | length }} bid(s).
+
+Please review the bids whenever you can. A link to the item is below:
+
+https://{{ site_url }}{{ item_path }}
+
+Thanks for using {{ site_name }}!

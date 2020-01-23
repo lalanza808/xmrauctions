@@ -33,6 +33,7 @@
         <th>List Date</th>
         <th>Whereabouts</th>
         <th>Asking Price (XMR)</th>
+        <th>Bids</th>
       </tr>
       {% for item in items %}
       <tr class="{% if item.owner == request.user %}item-mine{% endif %}">
@@ -48,6 +49,7 @@
         <td>{{ item.list_date | date:"d M, Y H:i:s" }}</td>
         <td><a href="https://duckduckgo.com/?q={{ item.whereabouts }}" target="_blank">{{ item.whereabouts }}</a></td>
         <td>{{ item.ask_price_xmr }}</td>
+        <td>{{ item.bids.all | length }}</td>
       </tr>
       {% endfor %}
     </table>

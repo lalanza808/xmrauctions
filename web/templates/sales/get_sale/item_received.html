@@ -22,7 +22,7 @@
   <p class="sale-info"><strong>Network Fee (XMR)</strong>:  {{ sale.network_fee_xmr }}</p>
   <p class="sale-info"><strong>Total Payout (XMR)</strong>:  {{ total_seller_payout }}</p>
   <p class="sale-info"><strong>Payout Address</strong>: {{ sale.item.payout_address }}</p>
-<p class="sale-info"><strong>Payout Transaction ID</strong>: <a href="{{ sale.seller_payout_transaction | search_block_explorer }}" target="_blank">{{ sale.seller_payout_transaction }}</a></p>
+<p class="sale-info"><strong>Payout Transaction ID</strong>: <a href="{{ sale.seller_payout_transaction | search_block_explorer }}">{{ sale.seller_payout_transaction }}</a></p>
   <br>
   <p class="sale-info">If you found the site useful and had a good experience, please consider sending a tip to the developer address provided at the bottom of the page.</p>
   <p class="sale-info">Thanks for using {{ site_meta.name }}!</p>

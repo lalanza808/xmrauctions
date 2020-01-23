@@ -4,24 +4,11 @@ from huey import crontab
 from huey.contrib.djhuey import periodic_task
 from django.conf import settings
 from django.core.cache import cache
-from core.monero import AuctionWallet, AuctionDaemon
+from core.monero import connect_rpc
 from sales.models import ItemSale
 
 
 logger = logging.getLogger('django.server')
-
-def connect_rpc(rpc_type):
-    if rpc_type == "daemon":
-        rpc = AuctionDaemon()
-    elif rpc_type == "wallet":
-        rpc = AuctionWallet()
-    else:
-        logger.error('[ERROR] Invalid RPC type specified. Use "daemon" or "wallet"')
-        return False
-    if rpc.connected is False:
-        logging.error(f'[ERROR] Auction {rpc_type} is not connected. Stopping task.')
-        return False
-    return rpc
 
 @periodic_task(crontab(minute='*/2'))
 def poll_for_buyer_escrow_payments():

@@ -31,7 +31,6 @@ class AuctionDaemon(object):
             self.connected = False
 
 
-
 class AuctionWallet(object):
     def __init__(self):
         self.host = settings.WALLET_HOST

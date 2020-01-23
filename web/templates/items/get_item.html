@@ -11,8 +11,8 @@
     <section>
       {% if not item.available %}<p>This item is currently pending sale. Bidding is temporarily closed.</p>{% endif %}
       <p class="sale-info"><strong>Whereabouts</strong>: <a href="https://duckduckgo.com/?q={{ item.whereabouts }}" target="_blank">{{ item.whereabouts }}</a></p>
-      <p class="sale-info"><strong>Creation</strong>: {{ item.list_date | date:"d M Y H:i:s" }}</p>
-      <p class="sale-info"><strong>Last Updated</strong>: {{ item.last_updated | date:"d M Y H:i:s" }}</p>
+      <p class="sale-info"><strong>Creation</strong>: {{ item.list_date | date:"d M Y H:i:s e" }}</p>
+      <p class="sale-info"><strong>Last Updated</strong>: {{ item.last_updated | date:"d M Y H:i:s e" }}</p>
       <p class="sale-info"><strong>Description</strong>: {{ item.description }}</p>
       <p class="sale-info"><strong>Asking Price (XMR)</strong>: {{ item.ask_price_xmr }}</p>
       {% for img in item_images %}

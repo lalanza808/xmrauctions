@@ -1,13 +1,11 @@
 from django.db.models import Q
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms import inlineformset_factory
 from items.forms import CreateItemForm, SearchItemForm
 from items.models import Item, ItemImage
-from bids.models import ItemBid
 from sales.models import ItemSale
 
 
@@ -50,7 +48,13 @@ def list_items(request):
     return render(request, 'items/list_items.html', context)
 
 def get_item(request, item_id):
-    item = Item.objects.get(id=item_id)
+    item = Item.objects.filter(id=item_id).first()
+
+    # Gracefully return user home if they hit missing item
+    if item is None:
+        messages.error(request, "That item does not exist.")
+        return HttpResponseRedirect(reverse('home'))
+
     item_images = item.images.all()
     item_bids = item.bids.all().order_by('-bid_price_xmr')
     sale = ItemSale.objects.filter(bid__in=item_bids, sale_cancelled=False).first()
@@ -98,8 +102,13 @@ def create_item(request):
 
 @login_required
 def edit_item(request, item_id):
-    item = Item.objects.get(id=item_id)
     ItemImageFormSet = inlineformset_factory(Item, ItemImage, fields=('image',))
+    item = Item.objects.filter(id=item_id).first()
+
+    # Gracefully return user home if they hit missing item
+    if item is None:
+        messages.error(request, "That item does not exist.")
+        return HttpResponseRedirect(reverse('home'))
 
     # Do not allow editing if current user is not the owner
     if request.user != item.owner:
@@ -140,7 +149,12 @@ def edit_item(request, item_id):
 
 @login_required
 def delete_item(request, item_id):
-    item = Item.objects.get(id=item_id)
+    item = Item.objects.filter(id=item_id).first()
+
+    # Gracefully return user home if they hit missing item
+    if item is None:
+        messages.error(request, "That item does not exist.")
+        return HttpResponseRedirect(reverse('home'))
 
     # Do not allow deleting if current user is not the owner
     if request.user != item.owner:

@@ -38,17 +38,17 @@ TWITTER_USER = os.environ.get('TWITTER_USER', 'lza_menace')
 GITHUB_USER = os.environ.get('GITHUB_USER', 'lalanza808')
 
 SOCIAL_MEDIA = {
-    'comment': {
+    'fas fa-comment-dots': {
         'url': 'https://webchat.freenode.net/?room=#monero',
-        'comment': f'IRC (@{IRC_USER})'
+        'comment': f'Monero IRC - @{IRC_USER}'
     },
-    'twitter': {
+    'fab fa-twitter': {
         'url': f'https://twitter.com/{TWITTER_USER}',
-        'comment': f'@{TWITTER_USER}'
+        'comment': f'Twitter - @{TWITTER_USER}'
     },
-    'github': {
+    'fab fa-github': {
         'url': f'https://github.com/{GITHUB_USER}',
-        'comment': f'@{GITHUB_USER}'
+        'comment': f'Github - @{GITHUB_USER}'
     }
 }
 
@@ -271,6 +271,7 @@ CORS_ORIGIN_REGEX_WHITELIST = [
 
 
 # Platform Wallets
+
 
 aw = AuctionWallet()
 platform_wallet_address = None

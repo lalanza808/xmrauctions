@@ -100,3 +100,7 @@
 	#footer .icons .rounded {
 		font-size: 1.5em;
 	}
+
+.container-slim {
+  width: 60%;
+}

@@ -1,5 +1,4 @@
 @charset "UTF-8";
-@import url("font-awesome.min.css");
 @font-face {
   font-family: 'Lato';
   font-style: normal;
@@ -1172,6 +1171,12 @@ New color: fd4e05
 .search-bar {
   margin-top: 1.2em;
   display: block;
+}
+
+.container-slim {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 html {

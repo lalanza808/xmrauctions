@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section id="main" class="wrapper">
+  <div class="container-slim">
+    <header class="minor">
+      <h2>Frequently Asked Questions</h2>
+    </header>
+    <br>
+    <section>
+      <h3>How Does This Site Work?</h3>
+      <p class="sale-info">
+        Visitors are able to register an account in order to receive email notifications and conduct buying and selling.
+        You can post items you own for sale and make bids on other items in a world marketplace.
+        If you accept a bid for an item you posted you must ship the item to the buyer in order to
+        receive the bid (minus any fees).
+        The site uses an escrow process to keep both parties honest;
+        buyers send funds to the escrow account which only gets released to the seller upon the buyer's receipt of the item.
+      </p>
+      <p>
+        All transactions on this platform use <a href="https://web.getmonero.org/get-started/what-is-monero/" target="_blank">Monero</a>,
+        a private, digital currency (cryptocurrency).
+      </p>
+
+      <h3>How Do I Use Monero?</h3>
+      <p class="sale-info">
+        In order to send and receive Monero you need to have the software installed on either your phone or computer.
+        Try out these popular Monero projects:
+      </p>
+      <ul>
+        <li><a href="https://www.getmonero.org/downloads/" target="_blank">Official Community Funded Monero Software (desktop)</a></li>
+        <li><a href="https://cakewallet.com/" target="_blank">CakeWallet (iOS, Android)</a></li>
+        <li><a href="https://www.monerujo.io/" target="_blank">Monerujo (Android)</a></li>
+        <li><a href="https://mymonero.com/" target="_blank">MyMonero (Desktop, Web)</a></li>
+      </ul>
+      <p>
+        Generate a new Wallet with the software and use the public address or subaddress on the platform when selling to receive Monero.
+        Use it to send Monero to the platform's escrow account when buying.
+      </p>
+
+      <h3>Isn't Cryptocurrency for Criminals?</h3>
+      <p class="sale-info">
+        No, but this is a common misconception.
+        Cryptocurrencies are built by and for the people of the world in an attempt
+        to fill in the gaps where our existing institutions have failed us.
+        There is nothing illegal about people exchanging goods and services with one another
+        and transacting with whatever they believe has value; this is a human right.
+      </p>
+      <p class="sale-info">
+        However, the private and decentralized nature of cryptocurrencies has garnered negative
+        attention from governments around the world, and by extension, the media. After all,
+        governments are funded by taxing the citizens of a nation and they work closely with central
+        banking entities which control the supply of money.
+      </p>
+      <p>
+        Cryptocurrencies can be used to circumvent these systems so those in power
+        have labelled it as "illegal" or "criminal" when in reality it just doesn't align
+        to the goals of traditional institutions; bringing power to the people.
+      </p>
+
+      <h3>Why Monero and not ____?</h3>
+      <p class="sale-info">
+        Monero has a long history of being open, honest, professional, and community-focused.
+        It is built with first-class privacy features that protects it's users from snooping and blockchain analysis.
+        The nature of most cryptocurrencies is that they use transparent ledgers,
+        meaning anyone in the world can view your wallet balance and transactions;
+        there is very little privacy focus.
+      </p>
+      <p>
+        Monero is one of very few truly fungible,
+        private cryptocurrencies that exist today which is why
+        it was selected as the primary medium of exchange
+        on this platform.
+      </p>
+    </section>
+  </div>
+
+  <div class="container-slim">
+    <header>
+      <h2>Contact Me</h2>
+    </header>
+    <div class="row 100%">
+      <section class="12u 12u$(small)">
+        <p class="sale-info">Need some support? Have a question? Need to tell me something?</p>
+        <p class="sale-info">Contact me at any of the locations below</p>
+        <ul>
+        {% for k,v in site_meta.social_media.items %}
+          <li><a href="{{ v.url }}" target="_blank"><i class="{{ k }}"></i> {{ v.comment }}</a></li>
+        {% endfor %}
+        </ul>
+      </section>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

@@ -1,6 +1,5 @@
 from django.conf import settings
 
-
 def inject_site_meta(request):
     return {
         'site_meta': {

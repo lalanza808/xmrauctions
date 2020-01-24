@@ -15,6 +15,7 @@
   <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#ea7544">
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="{% static 'css/all.min.css' %}" />
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <link rel="stylesheet" href="{% static 'css/noty.css' %}" />
   <link rel="stylesheet" href="{% static 'css/noty-relax.css' %}" />
@@ -111,16 +112,17 @@
 
     <header id="header">
       <h1><a href="{% url 'home' %}">{{ site_meta.name }}</a></h1>
-      <nav id="nav">
+        <nav id="nav">
         <ul>
-          <li><a href="{% url 'list_items' %}">View Items</a></li>
+            <li><a href="{% url 'list_items' %}">View Items</a></li>
+            <li><a href="{% url 'get_help' %}">Help</a></li>
           {% if user.is_authenticated %}
             <li><a href="{% url 'logout' %}">Logout ({{ request.user }})</a></li>
           {% else %}
             <li><a href="{% url 'login' %}">Login</a></li>
           {% endif %}
         </ul>
-      </nav>
+        </nav>
     </header>
 
     {% if messages %}
@@ -155,13 +157,7 @@
     <hr>
     <footer id="footer">
       <div class="container">
-        <ul class="copyright">
-          <li><a href="{% url 'get_privacy' %}">Privacy</a></li>
-          <li><a href="{% url 'get_terms' %}">Terms</a></li>
-          <li><a href="{% url 'get_faqs' %}">FAQ</a></li>
-        </ul>
-        <hr>
-        <p id="tip-address"><strong>Tip Address</strong>:<br> {{ site_meta.tip_address }}{% if site_meta.debug %} (stage){% endif %}</p>
+        <p id="tip-address"><strong><i class="fab fa-monero"></i> Leave a Tip</strong>:<br> {{ site_meta.tip_address }}</p>
       </div>
     </footer>
 

@@ -7,7 +7,7 @@ from items.models import Item
 
 logger = getLogger('django.server')
 
-@periodic_task(crontab(minute='0', hours='0', days='*/2'))
+@periodic_task(crontab(minute='0', hour='0', day='*/2'))
 def notify_seller_of_item_bids():
     items = Item.objects.all()
     for item in items:

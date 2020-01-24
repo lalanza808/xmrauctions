@@ -74,4 +74,22 @@
   </div>
 </section>
 
+<section id="two" class="wrapper style3 align-center network-stats">
+  <div class="container">
+    <header>
+      <h2>Contact Me</h2>
+    </header>
+    <div class="row 100%">
+      <section class="12u 12u$(small)">
+        <p>Contact me at any of the locations below</p>
+        <ul>
+        {% for k,v in site_meta.social_media.items %}
+          <li><a href="{{ v.url }}" target="_blank"><i class="fa fa-{{ k }}"></i> {{ v.comment }}</a></li>
+        {% endfor %}
+        </ul>
+      </section>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

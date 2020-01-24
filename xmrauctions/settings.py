@@ -31,6 +31,28 @@ BLOCK_CONFIRMATIONS_RCV = os.environ.get('BLOCK_CONFIRMATIONS_RCV', 3)
 BLOCK_EXPLORER = 'https://community.xmr.to/explorer/%s'
 
 
+# Social
+
+IRC_USER = os.environ.get('IRC_USER', 'lza_menace')
+TWITTER_USER = os.environ.get('TWITTER_USER', 'lza_menace')
+GITHUB_USER = os.environ.get('GITHUB_USER', 'lalanza808')
+
+SOCIAL_MEDIA = {
+    'comment': {
+        'url': 'https://webchat.freenode.net/?room=#monero',
+        'comment': f'IRC (@{IRC_USER})'
+    },
+    'twitter': {
+        'url': f'https://twitter.com/{TWITTER_USER}',
+        'comment': f'@{TWITTER_USER}'
+    },
+    'github': {
+        'url': f'https://github.com/{GITHUB_USER}',
+        'comment': f'@{GITHUB_USER}'
+    }
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [

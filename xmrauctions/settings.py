@@ -50,10 +50,6 @@ SOCIAL_MEDIA = {
     'fab fa-github': {
         'url': f'https://github.com/{GITHUB_USER}',
         'comment': f'Github - @{GITHUB_USER}'
-    },
-    'fas fa-envelope-open-text': {
-        'url': f'mailto:{EMAIL_ACCOUNT}',
-        'comment': f'Email - {EMAIL_ACCOUNT}'
     }
 }
 

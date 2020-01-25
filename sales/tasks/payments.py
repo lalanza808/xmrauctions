@@ -10,7 +10,7 @@ from sales.models import ItemSale
 
 logger = logging.getLogger('django.server')
 
-@periodic_task(crontab(minute='*/2'))
+@periodic_task(crontab(minute='*'))
 def poll_for_buyer_escrow_payments():
     wallet_rpc = connect_rpc("wallet")
     item_sales = ItemSale.objects.filter(payment_received=False)
@@ -21,12 +21,13 @@ def poll_for_buyer_escrow_payments():
         balances = sale_account.balances()
         sale.received_payment_xmr = balances[0]
         if balances[0] >= Decimal(str(sale.expected_payment_xmr)) and tx_in:
-            logger.info(f'[INFO] Found incoming transaction {tx_in[0].transaction} of {sale.received_payment_xmr} XMR for sale #{sale.id}.')
-            if tx_in[0].transaction.confirmations >= settings.BLOCK_CONFIRMATIONS_RCV:
+            logger.info(f'[INFO] Found incoming transaction {tx_in[-1].transaction} of {tx_in[-1].amount} '
+                        f'XMR for sale #{sale.id}.')
+            if tx_in[-1].transaction.confirmations >= settings.BLOCK_CONFIRMATIONS_RCV:
                 logger.info(f'[INFO] The incoming transaction has {settings.BLOCK_CONFIRMATIONS_RCV} confirmations and enough funds. Marking payment received.')
                 sale.payment_received = True
             else:
-                logger.info(f'[INFO] The incoming transaction only has {tx_in[0].transaction.confirmations} confirmations. Not enough to proceed.')
+                logger.info(f'[INFO] The incoming transaction only has {tx_in[-1].transaction.confirmations} confirmations. Not enough to proceed.')
 
         sale.save()
 

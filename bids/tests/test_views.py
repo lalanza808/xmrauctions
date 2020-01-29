@@ -37,8 +37,6 @@ class ItemBidModelsTestCase(TestCase):
 
     def test_list_bids_requires_auth(self):
         response = self.client.get(reverse('list_bids'))
-        request = response.wsgi_request
-        response = list_bids(request)
         self.assertTrue(response.url.startswith(reverse('login')))
         self.assertEqual(response.status_code, 302)
 
@@ -50,7 +48,7 @@ class ItemBidModelsTestCase(TestCase):
             bid_price_xmr=0.1,
             return_address=self.return_address
         )
-        self.client.login(username='buyer', password=self.buyer_password)
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
         response = self.client.get(reverse('list_bids'))
         response_w_str_arg = self.client.get(reverse('list_bids') + "?page=bar")
         response_w_empty_pg = self.client.get(reverse('list_bids') + "?page=9001")
@@ -60,4 +58,33 @@ class ItemBidModelsTestCase(TestCase):
         self.assertTrue(isinstance(response_w_empty_pg.context['bids'], Page), 'Paginated object not returned')
 
     def test_list_bids_returns_only_user_bids(self):
-        pass
+        for i in range(1, 20):
+            u = User.objects.create_user(f'list_bids_test{i}', password=token_urlsafe(16))
+            ItemBid.objects.create(
+                item=self.test_item,
+                bidder=u,
+                bid_price_xmr=0.2,
+                return_address=self.return_address
+            )
+
+        ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address
+        )
+
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('list_bids'))
+        self.client.logout()
+
+        # Test that buyer's bids are the only bids returned from view
+        user_bids = ItemBid.objects.filter(bidder=self.buyer)
+        self.assertEqual(len(user_bids), len(response.context['bids']))
+
+        # Test that each bid belongs to the buyer
+        for bid in response.context['bids']:
+            self.assertEqual(bid.bidder, self.buyer)
+
+
+

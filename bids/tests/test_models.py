@@ -2,12 +2,14 @@ from secrets import token_urlsafe
 from monero.seed import Seed
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test.client import Client
 from bids.models import ItemBid
 from items.models import Item
 
 
 class ItemBidModelsTestCase(TestCase):
     def setUp(self):
+        self.client = Client()
         self.seller_password = token_urlsafe(32)
         self.buyer_password = token_urlsafe(32)
 
@@ -40,3 +42,7 @@ class ItemBidModelsTestCase(TestCase):
         obj_name = f'{test_itembid.id} - {test_itembid.item.name} - {test_itembid.bidder} > {test_itembid.item.owner}'
         self.assertTrue(isinstance(test_itembid, ItemBid))
         self.assertEqual(test_itembid.__str__(), obj_name)
+
+
+
+

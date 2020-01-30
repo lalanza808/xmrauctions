@@ -13,7 +13,7 @@ from core.monero import AuctionWallet
 @login_required
 def list_bids(request):
     page_query = request.GET.get('page', 1)
-    bid_list = ItemBid.objects.filter(bidder=request.user)
+    bid_list = ItemBid.objects.filter(bidder=request.user).order_by('-last_updated')
     sales = ItemSale.objects.filter(bid__in=bid_list)
     paginator = Paginator(bid_list, 20)
 

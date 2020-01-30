@@ -7,7 +7,6 @@ from django.shortcuts import reverse
 from django.test.client import Client
 from items.models import Item
 from bids.models import ItemBid
-from bids.views import list_bids
 
 
 class ItemBidViewsTestCase(TestCase):
@@ -101,12 +100,17 @@ class ItemBidViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_create_bid_redirects_to_edit_if_bid_already_posted(self):
+        existing_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.2,
+            return_address=self.return_address
+        )
         self.client.login(username=self.buyer.username, password=self.buyer_password)
         response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
         self.client.logout()
-        print(response)
-        # self.assertTrue(response.url.startswith(reverse('home')))
-        # self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse('edit_bid', args=[existing_bid.id])))
+        self.assertEqual(response.status_code, 302)
 
 
 

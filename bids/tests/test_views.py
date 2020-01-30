@@ -7,6 +7,7 @@ from django.shortcuts import reverse
 from django.test.client import Client
 from items.models import Item
 from bids.models import ItemBid
+from bids.forms import CreateItemBidForm
 
 
 class ItemBidViewsTestCase(TestCase):
@@ -21,8 +22,8 @@ class ItemBidViewsTestCase(TestCase):
         self.buyer = User.objects.create_user(
             'buyer', password=self.buyer_password
         )
-        self.payout_address = Seed().public_address()
-        self.return_address = Seed().public_address()
+        self.payout_address = Seed().public_address(net='stagenet')
+        self.return_address = Seed().public_address(net='stagenet')
         self.whereabouts = 'Los Angeles, CA'
 
         self.test_item = Item.objects.create(
@@ -111,6 +112,54 @@ class ItemBidViewsTestCase(TestCase):
         self.client.logout()
         self.assertTrue(response.url.startswith(reverse('edit_bid', args=[existing_bid.id])))
         self.assertEqual(response.status_code, 302)
+        existing_bid.delete()
 
+    def test_create_bid_redirects_to_item_if_user_owns_item(self):
+        self.client.login(username=self.seller.username, password=self.seller_password)
+        response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
+        self.client.logout()
+        self.assertTrue(response.url.startswith(reverse('get_item', args=[self.test_item.id])))
+        self.assertEqual(response.status_code, 302)
 
+    def test_create_bid_redirects_to_item_if_item_unavailable(self):
+        self.test_item.available = False
+        self.test_item.save()
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
+        self.client.logout()
+        self.assertTrue(response.url.startswith(reverse('get_item', args=[self.test_item.id])))
+        self.assertEqual(response.status_code, 302)
 
+    def test_create_bid_save_redirect_if_valid(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.post(reverse('create_bid', args=[self.test_item.id]), {
+            'bid_price_xmr': 0.2,
+            'return_address': self.return_address,
+        })
+        buyer_bid = ItemBid.objects.filter(bidder=self.buyer, item=self.test_item.id).first()
+        self.client.logout()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertTrue(buyer_bid)
+        buyer_bid.delete()
+
+    def test_create_bid_no_save_redirect_if_invalid(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.post(reverse('create_bid', args=[self.test_item.id]), {
+            'bid_price_xmr': 'invalid bid price',
+            'return_address': 'invalid return address',
+        })
+        buyer_bid = ItemBid.objects.filter(bidder=self.buyer, item=self.test_item.id).first()
+        self.client.logout()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('create_bid', args=[self.test_item.id]))
+        self.assertIsNone(buyer_bid)
+
+    def test_create_bid_returns_valid_context(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['item'].id, self.test_item.id)
+        self.assertTrue(response.context['form'])
+        self.assertIsInstance(response.context['form'], CreateItemBidForm)

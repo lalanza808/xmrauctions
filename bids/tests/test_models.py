@@ -19,8 +19,8 @@ class ItemBidModelsTestCase(TestCase):
         self.buyer = User.objects.create_user(
             'buyer', self.buyer_password
         )
-        self.payout_address = Seed().public_address()
-        self.return_address = Seed().public_address()
+        self.payout_address = Seed().public_address(net='stagenet')
+        self.return_address = Seed().public_address(net='stagenet')
         self.whereabouts = 'Los Angeles, CA'
 
         self.test_item = Item.objects.create(

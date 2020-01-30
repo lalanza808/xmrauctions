@@ -10,7 +10,7 @@ from bids.models import ItemBid
 from bids.views import list_bids
 
 
-class ItemBidModelsTestCase(TestCase):
+class ItemBidViewsTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.seller_password = token_urlsafe(32)
@@ -79,12 +79,34 @@ class ItemBidModelsTestCase(TestCase):
         self.client.logout()
 
         # Test that buyer's bids are the only bids returned from view
-        user_bids = ItemBid.objects.filter(bidder=self.buyer)
+        all_bids = ItemBid.objects.all()
+        user_bids = all_bids.filter(bidder=self.buyer)
         self.assertEqual(len(user_bids), len(response.context['bids']))
+        self.assertLess(len(user_bids), len(all_bids))
 
         # Test that each bid belongs to the buyer
         for bid in response.context['bids']:
             self.assertEqual(bid.bidder, self.buyer)
+
+    def test_create_bid_requires_auth(self):
+        response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
+        self.assertTrue(response.url.startswith(reverse('login')))
+        self.assertEqual(response.status_code, 302)
+
+    def test_create_bid_redirects_home_if_item_id_missing(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('create_bid', args=[9999]))
+        self.client.logout()
+        self.assertTrue(response.url.startswith(reverse('home')))
+        self.assertEqual(response.status_code, 302)
+
+    def test_create_bid_redirects_to_edit_if_bid_already_posted(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
+        self.client.logout()
+        print(response)
+        # self.assertTrue(response.url.startswith(reverse('home')))
+        # self.assertEqual(response.status_code, 302)
 
 
 

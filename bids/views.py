@@ -33,7 +33,10 @@ def list_bids(request):
 
 @login_required
 def create_bid(request, item_id):
-    item = Item.objects.get(id=item_id)
+    item = Item.objects.filter(id=item_id).first()
+    if item is None:
+        messages.error(request, "That item does not exist for you to bid on.")
+        return HttpResponseRedirect(reverse('home'))
     current_user_bid = item.bids.filter(bidder=request.user).first()
 
     # Do not allow bidding if current user is the owner

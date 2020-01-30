@@ -78,7 +78,10 @@ def create_bid(request, item_id):
 
 @login_required
 def edit_bid(request, bid_id):
-    bid = ItemBid.objects.get(id=bid_id)
+    bid = ItemBid.objects.filter(id=bid_id).first()
+    if bid is None:
+        messages.error(request, "That bid does not exist for you to edit.")
+        return HttpResponseRedirect(reverse('home'))
 
     # Do not allow editing if current user doesn't own the bid
     if request.user != bid.bidder:

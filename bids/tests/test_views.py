@@ -35,11 +35,12 @@ class ItemBidViewsTestCase(TestCase):
             whereabouts=self.whereabouts
         )
 
+    ##### List Bids
+
     def test_list_bids_requires_auth(self):
         response = self.client.get(reverse('list_bids'))
         self.assertTrue(response.url.startswith(reverse('login')))
         self.assertEqual(response.status_code, 302)
-
 
     def test_list_bids_returns_pagination(self):
         ItemBid.objects.create(
@@ -88,6 +89,8 @@ class ItemBidViewsTestCase(TestCase):
         for bid in response.context['bids']:
             self.assertEqual(bid.bidder, self.buyer)
 
+    ##### Create Bid
+
     def test_create_bid_requires_auth(self):
         response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
         self.assertTrue(response.url.startswith(reverse('login')))
@@ -97,11 +100,11 @@ class ItemBidViewsTestCase(TestCase):
         self.client.login(username=self.buyer.username, password=self.buyer_password)
         response = self.client.get(reverse('create_bid', args=[9999]))
         self.client.logout()
-        self.assertTrue(response.url.startswith(reverse('home')))
+        self.assertEqual(response.url, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
     def test_create_bid_redirects_to_edit_if_bid_already_posted(self):
-        existing_bid = ItemBid.objects.create(
+        new_bid = ItemBid.objects.create(
             item=self.test_item,
             bidder=self.buyer,
             bid_price_xmr=0.2,
@@ -110,15 +113,15 @@ class ItemBidViewsTestCase(TestCase):
         self.client.login(username=self.buyer.username, password=self.buyer_password)
         response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
         self.client.logout()
-        self.assertTrue(response.url.startswith(reverse('edit_bid', args=[existing_bid.id])))
+        self.assertEqual(response.url, reverse('edit_bid', args=[new_bid.id]))
         self.assertEqual(response.status_code, 302)
-        existing_bid.delete()
+        new_bid.delete()
 
     def test_create_bid_redirects_to_item_if_user_owns_item(self):
         self.client.login(username=self.seller.username, password=self.seller_password)
         response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
         self.client.logout()
-        self.assertTrue(response.url.startswith(reverse('get_item', args=[self.test_item.id])))
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
         self.assertEqual(response.status_code, 302)
 
     def test_create_bid_redirects_to_item_if_item_unavailable(self):
@@ -127,7 +130,7 @@ class ItemBidViewsTestCase(TestCase):
         self.client.login(username=self.buyer.username, password=self.buyer_password)
         response = self.client.get(reverse('create_bid', args=[self.test_item.id]))
         self.client.logout()
-        self.assertTrue(response.url.startswith(reverse('get_item', args=[self.test_item.id])))
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
         self.assertEqual(response.status_code, 302)
 
     def test_create_bid_save_redirect_if_valid(self):
@@ -163,3 +166,44 @@ class ItemBidViewsTestCase(TestCase):
         self.assertEqual(response.context['item'].id, self.test_item.id)
         self.assertTrue(response.context['form'])
         self.assertIsInstance(response.context['form'], CreateItemBidForm)
+
+    ##### Edit Bid
+
+    def test_edit_bid_redirects_home_if_bid_id_missing(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('edit_bid', args=[9999]))
+        self.client.logout()
+        self.assertEqual(response.url, reverse('home'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_edit_bid_redirects_item_if_user_is_seller(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.2,
+            return_address=self.return_address
+        )
+        self.client.logout()
+        self.client.login(username=self.seller.username, password=self.seller_password)
+        response = self.client.get(reverse('edit_bid', args=[new_bid.id]))
+        self.client.logout()
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+        new_bid.delete()
+
+    def test_edit_bid_redirects_item_if_bid_is_accepted(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.2,
+            return_address=self.return_address,
+            accepted=True
+        )
+        response = self.client.get(reverse('edit_bid', args=[new_bid.id]))
+        self.client.logout()
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(new_bid.accepted)
+        new_bid.delete()

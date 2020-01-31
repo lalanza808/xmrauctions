@@ -80,7 +80,7 @@ def create_bid(request, item_id):
 def edit_bid(request, bid_id):
     bid = ItemBid.objects.filter(id=bid_id).first()
     if bid is None:
-        messages.error(request, "That bid does not exist for you to edit.")
+        messages.error(request, "You can't edit a bid that doesn't exist.")
         return HttpResponseRedirect(reverse('home'))
 
     # Do not allow editing if current user doesn't own the bid
@@ -172,7 +172,10 @@ def accept_bid(request, bid_id):
 
 @login_required
 def delete_bid(request, bid_id):
-    bid = ItemBid.objects.get(id=bid_id)
+    bid = ItemBid.objects.filter(id=bid_id).first()
+    if bid is None:
+        messages.error(request, "You can't delete a bid that doesn't exist.")
+        return HttpResponseRedirect(reverse('home'))
 
     # Do not allow deleting the bid unless you own the bid
     if request.user != bid.bidder:

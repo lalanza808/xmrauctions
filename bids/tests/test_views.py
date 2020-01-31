@@ -264,3 +264,54 @@ class ItemBidViewsTestCase(TestCase):
         self.assertTrue(response.context['form'])
         self.assertIsInstance(response.context['form'], CreateItemBidForm)
         new_bid.delete()
+
+    ##### Delete Bid
+
+    def test_delete_bid_redirect_home_if_bid_id_missing(self):
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('delete_bid', args=[9999]))
+        self.client.logout()
+        self.assertEqual(response.url, reverse('home'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_delete_bid_redirect_item_if_user_not_bidder(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address
+        )
+        self.client.login(username=self.seller.username, password=self.seller_password)
+        response = self.client.get(reverse('delete_bid', args=[new_bid.id]))
+        self.client.logout()
+        self.assertEqual(response.url, reverse('get_item', args=[new_bid.item.id]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_delete_bid_redirect_item_if_bid_is_accepted(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address,
+            accepted=True
+        )
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('delete_bid', args=[new_bid.id]))
+        buyer_bid = ItemBid.objects.filter(bidder=self.buyer, item=self.test_item.id).first()
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(buyer_bid.accepted)
+
+    def test_delete_bid_redirect_item_if_bid_is_deleted(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address
+        )
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('delete_bid', args=[new_bid.id]))
+        buyer_bid = ItemBid.objects.filter(bidder=self.buyer, item=self.test_item.id).first()
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIsNone(buyer_bid)

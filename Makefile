@@ -7,10 +7,19 @@ help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 build: ## Build the required containers
+	cp Docker/Dockerfile-* .
 	docker build -t xmrauctions -f Dockerfile-xmrauctions .
+	rm -f Dockerfile-*
 
 up: ## Run dev service containers
+	cp Docker/docker-compose.yaml .
 	docker-compose up -d
+	rm -f docker-compose.yaml
+
+down: ## Stop dev service containers
+	cp Docker/docker-compose.yaml .
+	docker-compose down
+	rm -f docker-compose.yaml
 
 dev: ## Start development web service
 	./manage.py runserver
@@ -18,22 +27,27 @@ dev: ## Start development web service
 shell: ## Enter Django shell
 	./manage.py shell
 
-createsuperuser: ## Create admin user in Django backend
-	docker run --rm -it --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py createsuperuser
+clean:
+	rm -f *compose.yaml Dockerfile*
+
+logs:
+	cp Docker/docker-compose.yaml .
+	docker-compose logs -f
+	rm -f docker-compose.yaml
 
 ### Deploy
 
 deploy-up: ## Run the containers
-	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml up -d
+	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml up -d
 
 deploy-down: ## Stop the containers
-	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml down
+	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml down
 
 deploy-ps: ## Show the containers
-	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml ps
+	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml ps
 
 deploy-logs: ## Show container logs
-	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml logs -f
+	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml logs -f
 
 deploy-static: ## Collect static
 	docker run --rm --env-file=.env xmrauctions ./manage.py collectstatic --no-input
@@ -43,3 +57,6 @@ deploy-migrations: ## Run migrations
 
 deploy-manage: ## Run management commands
 	docker run --rm -it --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py $(CMD)
+
+deploy-createadmin: ## Create admin user in Django backend
+	docker run --rm -it --env-file=.env --net=xmrauctions_default xmrauctions ./manage.py createsuperuser

@@ -5,6 +5,5 @@
 data
 media
 docker-compose.yaml
-Dockerfile
-Dockerfile-monero
 README.md
+Docker

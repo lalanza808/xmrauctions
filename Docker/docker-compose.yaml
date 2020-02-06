@@ -14,3 +14,4 @@ services:
     image: redis:5.0.7-buster
     ports:
       - 6379:6379
+  

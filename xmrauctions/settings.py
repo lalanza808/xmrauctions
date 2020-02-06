@@ -36,7 +36,6 @@ BLOCK_EXPLORER = 'https://community.xmr.to/explorer/%s'
 IRC_USER = os.environ.get('IRC_USER', 'lza_menace')
 TWITTER_USER = os.environ.get('TWITTER_USER', 'lza_menace')
 GITHUB_USER = os.environ.get('GITHUB_USER', 'lalanza808')
-EMAIL_ACCOUNT = os.environ.get('EMAIL_ACCOUNT', 'lza_menace@protonmail.com')
 
 SOCIAL_MEDIA = {
     'fas fa-comment-dots': {

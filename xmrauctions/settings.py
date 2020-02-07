@@ -25,6 +25,7 @@ SITE_URL = os.environ.get('SITE_URL', '127.0.0.1:8000')
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', False)
 ALLOWED_HOSTS = str(os.environ['ALLOWED_HOSTS']).split(',')
+ALLOWED_HOSTS.append('gunicorn')
 ESCROW_PERIOD_DAYS = os.environ.get('ESCROW_PERIOD_DAYS', 30)
 PLATFORM_FEE_PERCENT = os.environ.get('PLATFORM_FEE_PERCENT', 0)
 BLOCK_CONFIRMATIONS_RCV = os.environ.get('BLOCK_CONFIRMATIONS_RCV', 3)

@@ -30,11 +30,15 @@ services:
       - ./Docker/files/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/default.yaml:ro
       - ./Docker/files/grafana/prometheus.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml:ro
       - ./Docker/files/grafana/xmrauctions_metrics.json:/var/lib/grafana/dashboards/xmrauctions_metrics.json:ro
-      - ./data/grafana:/var/lib/grafana
+      - grafana:/var/lib/grafana
   prometheus:
     image: prom/prometheus:v2.15.2
     ports:
       - 9090:9090
     volumes:
       - ./Docker/files/prometheus:/etc/prometheus
-      - ./data/prometheus/
+      - prometheus:/prometheus
+
+volumes:
+  grafana:
+  prometheus:

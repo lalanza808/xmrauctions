@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.cache import cache
+from django.conf import settings
 from core.forms import UserShippingAddressForm
 from core.models import UserShippingAddress
 from core.monero import AuctionDaemon, AuctionWallet
@@ -34,6 +35,13 @@ def health(request):
     }
 
     return JsonResponse(context)
+
+def devops_dashboard(request):
+    dodb = settings.DEVOPS_DASHBOARD
+    if dodb:
+        return HttpResponseRedirect(dodb)
+    else:
+        return HttpResponseRedirect(reverse('health'))
 
 def get_help(request):
     return render(request, 'core/help.html')

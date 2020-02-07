@@ -29,6 +29,7 @@ ESCROW_PERIOD_DAYS = os.environ.get('ESCROW_PERIOD_DAYS', 30)
 PLATFORM_FEE_PERCENT = os.environ.get('PLATFORM_FEE_PERCENT', 0)
 BLOCK_CONFIRMATIONS_RCV = os.environ.get('BLOCK_CONFIRMATIONS_RCV', 3)
 BLOCK_EXPLORER = 'https://community.xmr.to/explorer/%s'
+DEVOPS_DASHBOARD = os.environ.get('DEVOPS_DASHBOARD', None)
 
 
 # Social

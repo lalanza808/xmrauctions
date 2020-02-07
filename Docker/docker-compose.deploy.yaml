@@ -21,6 +21,7 @@ services:
     ports:
       - 127.0.0.1:3000:3000
     environment:
+      HOSTNAME: grafana
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_SERVER_ROOT_URL: ${GRAFANA_URL}
@@ -28,6 +29,7 @@ services:
       GF_SERVER_ENFORCE_DOMAIN: "true"
       GF_ANALYTICS_REPORTING_ENABLED: "false"
       GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - ./Docker/files/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/default.yaml:ro
       - ./Docker/files/grafana/prometheus.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml:ro

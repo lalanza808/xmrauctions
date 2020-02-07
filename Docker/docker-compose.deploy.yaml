@@ -26,10 +26,10 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_SERVER_ROOT_URL: ${GRAFANA_URL}
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
-      GF_SERVER_ENFORCE_DOMAIN: "true"
       GF_ANALYTICS_REPORTING_ENABLED: "false"
       GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
       GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_ALLOW_ORG_CREATE: "false"
     volumes:
       - ./Docker/files/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/default.yaml:ro
       - ./Docker/files/grafana/prometheus.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml:ro

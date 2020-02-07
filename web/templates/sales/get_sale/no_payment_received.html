@@ -17,7 +17,7 @@
       </li>
     {% endfor %}
     </ul>
-    <p>Once the payments are confirmed for {{ site_meta.block_confirmations }} blocks the transaction will continue.</p>
+    <p>Once the payments are confirmed for {{ site_meta.block_confirmations }} blocks and enough funds have been sent the transaction will continue.</p>
   {% else %}
   <img src="data:image/png;base64,{{ qrcode }}" width=200 class="center">
   <hr>

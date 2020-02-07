@@ -1,10 +1,11 @@
+from django_prometheus.models import ExportModelOperationsMixin
 from django.db import models
 from django.contrib.auth.models import User
 from items.models import Item
 from core.validators import address_is_valid_monero
 
 
-class ItemBid(models.Model):
+class ItemBid(ExportModelOperationsMixin('item_bid'), models.Model):
     item = models.ForeignKey(Item, related_name='bids', on_delete=models.CASCADE)
     bidder = models.ForeignKey(User, related_name='bidder', on_delete=models.CASCADE)
     bid_date = models.DateTimeField(auto_now_add=True)

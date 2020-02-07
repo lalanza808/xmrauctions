@@ -1,5 +1,6 @@
 from os import path as os_path
 from secrets import token_urlsafe
+from django_prometheus.models import ExportModelOperationsMixin
 from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.models import User
@@ -10,7 +11,7 @@ from core.monero import AuctionDaemon
 from core.validators import address_is_valid_monero
 
 
-class Item(models.Model):
+class Item(ExportModelOperationsMixin('item'), models.Model):
     owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     list_date = models.DateTimeField(auto_now_add=True)
@@ -25,7 +26,7 @@ class Item(models.Model):
         return f"{self.id} - {self.owner} - {self.name}"
 
 
-class ItemImage(models.Model):
+class ItemImage(ExportModelOperationsMixin('item_image'), models.Model):
     item = models.ForeignKey(Item, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='%Y/%m/%d')
     thumbnail = models.ImageField(upload_to='%Y/%m/%d')

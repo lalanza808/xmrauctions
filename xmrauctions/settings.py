@@ -68,10 +68,12 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'huey.contrib.djhuey',
     'corsheaders',
-    'anymail'
+    'anymail',
+    'django_prometheus'
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -79,7 +81,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware'
 ]
 
 ROOT_URLCONF = 'xmrauctions.urls'
@@ -111,7 +114,7 @@ WSGI_APPLICATION = 'xmrauctions.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+        'ENGINE': os.environ.get('DB_ENGINE', 'django_prometheus.db.backends.postgresql'),
         'NAME': os.environ['DB_NAME'],
         'PASSWORD': os.environ['DB_PASS'],
         'PORT': os.environ.get('DB_PORT', 5432),

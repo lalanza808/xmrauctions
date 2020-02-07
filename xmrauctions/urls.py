@@ -27,6 +27,7 @@ urlpatterns = [
     path('bids/', include('bids.urls')),
     path('sales/', include('sales.urls')),
     path('items/', include('items.urls')),
+    path('', include('django_prometheus.urls'))
 ]
 
 # Load local images if running locally

@@ -1,3 +1,4 @@
+from django_prometheus.models import ExportModelOperationsMixin
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -5,7 +6,7 @@ from items.models import Item
 from bids.models import ItemBid
 
 
-class ItemSale(models.Model):
+class ItemSale(ExportModelOperationsMixin('item_sale'), models.Model):
     item = models.ForeignKey(Item, related_name='sales', on_delete=models.CASCADE)
     bid = models.ForeignKey(ItemBid, related_name='bids', on_delete=models.CASCADE)
     escrow_address = models.CharField(max_length=96)

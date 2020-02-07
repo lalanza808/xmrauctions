@@ -1,4 +1,4 @@
-{
+{
   "annotations": {
     "list": [
       {
@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -261,8 +261,10 @@
       "seriesOverrides": [
         {
           "alias": "GET - prometheus-django-metrics",
+          "fill": 0,
           "hideTooltip": true,
-          "legend": false
+          "legend": false,
+          "lines": false
         }
       ],
       "spaceLength": 10,
@@ -610,7 +612,7 @@
       }
     }
   ],
-  "refresh": "30s",
+  "refresh": "1m",
   "schemaVersion": 21,
   "style": "dark",
   "tags": [],
@@ -618,7 +620,7 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -638,5 +640,5 @@
   "timezone": "browser",
   "title": "XMR Auctions",
   "uid": "pVe331UWk",
-  "version": 27
+  "version": 1
 }

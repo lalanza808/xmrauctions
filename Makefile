@@ -38,16 +38,24 @@ logs:
 ### Deploy
 
 deploy-up: ## Run the containers
-	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml up -d
+	cp Docker/docker-compose* .
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml up -d
+	rm -f docker-compose*
 
 deploy-down: ## Stop the containers
-	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml down
+	cp Docker/docker-compose* .
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml down
+	rm -f docker-compose*
 
 deploy-ps: ## Show the containers
-	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml ps
+	cp Docker/docker-compose* .
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml ps
+	rm -f docker-compose*
 
 deploy-logs: ## Show container logs
-	docker-compose -f Docker/docker-compose.yaml -f Docker/docker-compose.deploy.yaml logs -f
+	cp Docker/docker-compose* .
+	docker-compose -f docker-compose.yaml -f docker-compose.deploy.yaml logs -f
+	rm -f docker-compose*
 
 deploy-static: ## Collect static
 	docker run --rm --env-file=.env xmrauctions ./manage.py collectstatic --no-input

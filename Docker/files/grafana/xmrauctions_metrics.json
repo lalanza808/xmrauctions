@@ -61,7 +61,8 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "GET - prometheus-django-metrics",
+          "alias": "/.*prometheus.*/",
+          "fill": 0,
           "hideTooltip": true,
           "legend": false,
           "lines": false
@@ -72,9 +73,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(django_http_requests_total_by_view_transport_method_total[1m]) * 60",
-          "instant": false,
-          "legendFormat": "{{ method }} - {{ view }}",
+          "expr": "rate(django_http_responses_total_by_status_view_method_total[1m]) * 60",
+          "hide": false,
+          "legendFormat": "{{ status }} -  {{ method }} - {{ view }} ",
           "refId": "A"
         }
       ],
@@ -82,7 +83,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Requests by Method/View",
+      "title": "Responses by Status/Method/View",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -132,6 +133,205 @@
         "w": 5,
         "x": 19,
         "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "django",
+          "color": "#5794F2"
+        },
+        {
+          "alias": "prometheus",
+          "color": "#FF9830"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total[1m]) * 100",
+          "legendFormat": "{{ job }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Estimated CPU",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "decimals": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 19,
+        "x": 0,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*prometheus.*/",
+          "fill": 0,
+          "hideTooltip": true,
+          "legend": false,
+          "lines": false
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(django_http_requests_latency_seconds_by_view_method_sum{job=\"django\"}[1m])",
+          "hide": false,
+          "legendFormat": "{{ method }} - {{ view }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Request Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 5,
+        "x": 19,
+        "y": 8
       },
       "hiddenSeries": false,
       "id": 6,
@@ -222,20 +422,21 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
-      "decimals": null,
+      "decimals": 2,
+      "description": "",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 19,
         "x": 0,
-        "y": 8
+        "y": 16
       },
       "hiddenSeries": false,
-      "id": 8,
+      "id": 10,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": false,
         "hideEmpty": true,
         "hideZero": true,
@@ -243,9 +444,8 @@
         "min": false,
         "rightSide": true,
         "show": true,
-        "sort": "avg",
-        "sortDesc": true,
-        "total": false,
+        "sideWidth": null,
+        "total": true,
         "values": true
       },
       "lines": true,
@@ -258,33 +458,35 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "GET - prometheus-django-metrics",
-          "fill": 0,
-          "hideTooltip": true,
-          "legend": false,
-          "lines": false
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(django_http_requests_latency_seconds_by_view_method_sum{job=\"django\"}[1m])",
-          "legendFormat": "{{ method }} - {{ view }}",
-          "refId": "A"
+          "expr": "rate(django_model_updates_total{job=\"django\"}[1m]) * 60",
+          "legendFormat": "{{ model }} Updates",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(django_model_deletes_total{job=\"django\"}[1m]) * 60",
+          "legendFormat": "{{ model }} Deletes",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(django_model_inserts_total{job=\"django\"}[1m]) * 60",
+          "legendFormat": "{{ model }} Inserts",
+          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Request Latency",
+      "title": "DB Model Operations",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -297,7 +499,7 @@
       },
       "yaxes": [
         {
-          "format": "s",
+          "format": "opm",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -305,7 +507,7 @@
           "show": true
         },
         {
-          "format": "none",
+          "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -330,7 +532,7 @@
         "h": 8,
         "w": 5,
         "x": 19,
-        "y": 8
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 4,
@@ -417,120 +619,16 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
-      "decimals": 2,
-      "description": "",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 19,
         "x": 0,
-        "y": 16
+        "y": 24
       },
       "hiddenSeries": false,
-      "id": 10,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": false,
-        "hideEmpty": true,
-        "hideZero": true,
-        "max": false,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "sideWidth": null,
-        "total": true,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(django_model_updates_total{job=\"django\"}[1m]) * 60",
-          "legendFormat": "{{ model }} Updates",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(django_model_deletes_total{job=\"django\"}[1m]) * 60",
-          "legendFormat": "{{ model }} Deletes",
-          "refId": "B"
-        },
-        {
-          "expr": "rate(django_model_inserts_total{job=\"django\"}[1m]) * 60",
-          "legendFormat": "{{ model }} Inserts",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "DB Operations",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "opm",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "Prometheus",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 5,
-        "x": 19,
-        "y": 16
-      },
-      "hiddenSeries": false,
-      "id": 12,
+      "id": 14,
       "legend": {
         "avg": false,
         "current": false,
@@ -552,12 +650,8 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "django",
+          "alias": "/.*/",
           "color": "#5794F2"
-        },
-        {
-          "alias": "prometheus",
-          "color": "#FF9830"
         }
       ],
       "spaceLength": 10,
@@ -565,8 +659,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total[1m]) * 100",
-          "legendFormat": "{{ job }}",
+          "expr": "rate(django_db_execute_total[1m])",
           "refId": "A"
         }
       ],
@@ -574,7 +667,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Estimated CPU",
+      "title": "DB Executions",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -603,7 +696,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -612,7 +705,7 @@
       }
     }
   ],
-  "refresh": "1m",
+  "refresh": "10s",
   "schemaVersion": 21,
   "style": "dark",
   "tags": [],
@@ -640,5 +733,5 @@
   "timezone": "browser",
   "title": "XMR Auctions",
   "uid": "pVe331UWk",
-  "version": 1
+  "version": 10
 }

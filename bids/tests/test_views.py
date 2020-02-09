@@ -8,6 +8,7 @@ from django.test.client import Client
 from items.models import Item
 from bids.models import ItemBid
 from bids.forms import CreateItemBidForm
+from sales.models import ItemSale
 
 
 class ItemBidViewsTestCase(TestCase):
@@ -169,6 +170,17 @@ class ItemBidViewsTestCase(TestCase):
 
     ##### Edit Bid
 
+    def test_edit_bid_requires_auth(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.2,
+            return_address=self.return_address
+        )
+        response = self.client.get(reverse('edit_bid', args=[new_bid.id])) # anon
+        self.assertTrue(response.url.startswith(reverse('login')))
+        self.assertEqual(response.status_code, 302)
+
     def test_edit_bid_redirect_home_if_bid_id_missing(self):
         self.client.login(username=self.buyer.username, password=self.buyer_password)
         response = self.client.get(reverse('edit_bid', args=[9999]))
@@ -315,3 +327,88 @@ class ItemBidViewsTestCase(TestCase):
         self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
         self.assertEqual(response.status_code, 302)
         self.assertIsNone(buyer_bid)
+
+    ##### Accept Bid
+
+    def test_accept_bid_requires_auth(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.2,
+            return_address=self.return_address
+        )
+        response = self.client.get(reverse('accept_bid', args=[new_bid.id])) # anon
+        self.assertTrue(response.url.startswith(reverse('login')))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(new_bid.accepted)
+
+    def test_accept_bid_redirect_item_if_user_not_seller(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address
+        )
+        self.client.login(username=self.buyer.username, password=self.buyer_password)
+        response = self.client.get(reverse('accept_bid', args=[new_bid.id]))
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(new_bid.accepted)
+
+    def test_accept_bid_redirect_item_if_item_not_available(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address
+        )
+        self.test_item.available = False
+        self.test_item.save()
+        self.client.login(username=self.seller.username, password=self.seller_password)
+        response = self.client.get(reverse('accept_bid', args=[new_bid.id]))
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(new_bid.accepted)
+
+    def test_accept_bid_redirect_item_if_bid_accepted_already(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address,
+            accepted=True
+        )
+        self.client.login(username=self.seller.username, password=self.seller_password)
+        response = self.client.get(reverse('accept_bid', args=[new_bid.id]))
+        self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+        self.assertEqual(response.status_code, 302)
+
+    # def test_accept_bid_redirect_item_if_wallet_not_connected(self):
+    #     new_bid = ItemBid.objects.create(
+    #         item=self.test_item,
+    #         bidder=self.buyer,
+    #         bid_price_xmr=0.1,
+    #         return_address=self.return_address
+    #     )
+    #     self.client.login(username=self.seller.username, password=self.seller_password)
+    #     response = self.client.get(reverse('accept_bid', args=[new_bid.id]))
+    #     self.assertEqual(response.url, reverse('get_item', args=[self.test_item.id]))
+    #     self.assertEqual(response.status_code, 302)
+    #     self.assertFalse(aw.connected)
+
+    def test_accept_bid_updates_item_attributes(self):
+        new_bid = ItemBid.objects.create(
+            item=self.test_item,
+            bidder=self.buyer,
+            bid_price_xmr=0.1,
+            return_address=self.return_address
+        )
+        self.client.login(username=self.seller.username, password=self.seller_password)
+        response = self.client.get(reverse('accept_bid', args=[new_bid.id]))
+        item_sale = ItemSale.objects.filter(item=self.test_item, bid=new_bid).first()
+        updated_bid = ItemBid.objects.get(id=new_bid.id)
+        self.assertTrue(item_sale)
+        self.assertTrue(updated_bid.accepted)
+        self.assertFalse(updated_bid.item.available)
+        self.assertEqual(response.url, reverse('get_sale', args=[item_sale.id]))
+        self.assertEqual(response.status_code, 302)

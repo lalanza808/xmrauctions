@@ -120,11 +120,6 @@ def accept_bid(request, bid_id):
     expected_payment_xmr = bid.bid_price_xmr + platform_fee_xmr
     account_label = f'Sale account for Item #{bid.item.id}, Bid #{bid.id}'
 
-    # Do not allow accepting your own bid
-    if request.user == bid.bidder:
-        messages.error(request, "You can't accept your own bid.")
-        return HttpResponseRedirect(reverse('get_item', args=[bid.item.id]))
-
     # Do not allow accepting the bid unless you own the item that received the bid
     if request.user != bid.item.owner:
         messages.error(request, "You can't accept a bid if you don't own the item.")

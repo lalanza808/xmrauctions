@@ -29,6 +29,7 @@ class EmailTemplate:
         context['site_name'] = settings.SITE_NAME
         context['site_url'] = settings.SITE_URL
         context['escrow_period'] = settings.ESCROW_PERIOD_DAYS
+        context['stale_period'] = settings.STALE_PERIOD_DAYS
 
         subject = render_to_string(
             template_name=f'{tpl_path}/notify/{scenario}/{role}/subject.txt',

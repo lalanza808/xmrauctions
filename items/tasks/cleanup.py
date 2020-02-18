@@ -1,28 +1,16 @@
 from logging import getLogger
-from datetime import timedelta
-from django.utils import timezone as tz
 from django.conf import settings
 from huey import crontab
 from huey.contrib.djhuey import periodic_task
-from items.models import Item
-from core.helpers.email_template import EmailTemplate
+from items.tasks.common import get_items_past_days
 
 
 logger = getLogger('django.server')
 
-@periodic_task(crontab(minute='0', hour='*/21'))
-def close_stale_items():
-    time_delta = tz.now() - timedelta(days=settings.ESCROW_PERIOD_DAYS)
-    items = Item.objects.filter(list_date__lt=time_delta, available=True)
-
+@periodic_task(crontab(minute='0', hour='0', day='*'))
+def delete_expired_items():
+    expired_days = settings.ESCROW_PERIOD_DAYS
+    items = get_items_past_days(expired_days)
     for item in items:
-        logger.info(f'[INFO] Found stale item #{item.id} (older than {settings.ESCROW_PERIOD_DAYS} days).')
-        if item.bids:
-            email_template = EmailTemplate(
-                item=item,
-                scenario='item_stale_with_bids',
-                role='seller'
-            )
-            email_template.send()
-
-
+        logger.info(f'[INFO] Found expired item #{item.id} (older than {expired_days} days).')
+        item.delete()

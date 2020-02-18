@@ -1,6 +1,6 @@
 Bad News {{ item.owner }},
 
-Your item, "{{ item.name }}" (#{{ item.id }}), has been listed on the auction house for over {{ escrow_period }} days. There are currently {{ item.bids.values | length }} bid(s) posted to it.
+Your item, "{{ item.name }}" (#{{ item.id }}), has been listed on the auction house for over {{ stale_period }} days. There are currently {{ item.bids.values | length }} bid(s) posted to it.
 
 We'll provide you with a few more hours to either accept a bid or delete the item from the auction. Please do something soon.
 

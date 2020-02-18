@@ -27,6 +27,7 @@ DEBUG = os.environ.get('DEBUG', False)
 ALLOWED_HOSTS = str(os.environ['ALLOWED_HOSTS']).split(',')
 ALLOWED_HOSTS.append('gunicorn')
 ESCROW_PERIOD_DAYS = os.environ.get('ESCROW_PERIOD_DAYS', 30)
+STALE_PERIOD_DAYS = os.environ.get('STALE_PERIOD_DAYS', 21)
 PLATFORM_FEE_PERCENT = os.environ.get('PLATFORM_FEE_PERCENT', 0)
 BLOCK_CONFIRMATIONS_RCV = os.environ.get('BLOCK_CONFIRMATIONS_RCV', 3)
 BLOCK_EXPLORER = 'https://community.xmr.to/explorer/%s'

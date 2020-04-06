@@ -1,5 +1,5 @@
 Django==2.2.10
-Pillow==6.2.1
+Pillow==6.2.2
 boto3==1.10.45
 coverage==5.0.3
 django-anymail[mailgun]==7.0.0

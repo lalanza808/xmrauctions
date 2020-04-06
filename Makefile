@@ -24,6 +24,9 @@ down: ## Stop dev service containers
 dev: ## Start development web service
 	./manage.py runserver
 
+dev-huey: ## Start development Huey service
+	./manage.py run_huey
+
 shell: ## Enter Django shell
 	./manage.py shell
 

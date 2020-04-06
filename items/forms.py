@@ -5,15 +5,16 @@ from items.models import Item, address_is_valid_monero
 class CreateItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['name', 'description', 'whereabouts', 'ask_price_xmr', 'payout_address']
+        fields = ['sale_type', 'name', 'description', 'whereabouts', 'ask_price_xmr', 'payout_address']
         labels = {
             'ask_price_xmr': 'Asking Price (XMR)',
-            'payout_address': 'Payout Wallet Address'
+            'payout_address': 'Payout Wallet Address',
+            'sale_type': 'Method of Delivery'
         }
         help_texts = {
             'name': 'Use a succinct name for your item. Don\'t be spammy or obscene.',
             'description': 'Describe the condition of the item and any important information. Try to refrain from sharing personally identifiable information like phone numbers or social media links.',
-            'whereabouts': 'A simple pointer to your general region - a nearby capital city and your state would be perfect.',
+            'whereabouts': 'Your general location - a nearby capital city and your state would be great for most cases so shipping costs can be accounted for. Use randomized text to remain anonymous.',
             'ask_price_xmr': 'How many moneroj do you want for your item?',
             'payout_address': 'A Monero wallet address where funds will be sent after sale is confirmed.',
         }
@@ -27,4 +28,3 @@ class SearchItemForm(forms.Form):
             attrs={'placeholder':'Search whereabouts, item name, or description'}
         )
     )
-

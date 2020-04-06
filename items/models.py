@@ -11,6 +11,11 @@ from core.monero import AuctionDaemon
 from core.validators import address_is_valid_monero
 
 
+ItemSaleTypes = (
+    ('SHIPPING', 'Ship the item to a provided address.'),
+    ('MEETING', 'Deliver the item to an agreed upon public location.')
+)
+
 class Item(ExportModelOperationsMixin('item'), models.Model):
     owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -21,6 +26,7 @@ class Item(ExportModelOperationsMixin('item'), models.Model):
     available = models.BooleanField(default=True)
     payout_address = models.CharField(max_length=100, validators=[address_is_valid_monero])
     whereabouts = models.CharField(max_length=100)
+    sale_type = models.CharField(max_length=20, choices=ItemSaleTypes, default='SHIPPING')
 
     def __str__(self):
         return f"{self.id} - {self.owner} - {self.name}"

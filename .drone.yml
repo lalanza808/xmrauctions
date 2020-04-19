@@ -17,9 +17,3 @@ steps:
   image: alpine
   commands:
   - echo hola mundo
-
-- name: notify
-  image: plugins/slack
-  settings:
-    channel: ops
-    webhook: https://hooks.slack.com/services/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

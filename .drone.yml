@@ -17,3 +17,10 @@ steps:
   image: alpine
   commands:
   - echo hola mundo
+
+- name: notify
+  image: plugins/slack
+  settings:
+    channel: ops
+    webhook:
+      from_secret: SLACK_URL

@@ -1,0 +1,25 @@
+kind: pipeline
+type: docker
+name: hello-world
+
+steps:
+- name: en
+  image: alpine
+  commands:
+  - echo hello world
+
+- name: fr
+  image: alpine
+  commands:
+  - echo bonjour monde
+
+- name: sp
+  image: alpine
+  commands:
+  - echo hola mundo
+
+- name: notify
+  image: plugins/slack
+  settings:
+    channel: ops
+    webhook: https://hooks.slack.com/services/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

@@ -6,17 +6,17 @@ steps:
 - name: en
   image: alpine
   commands:
-  - echo hello world
+  - echo "hello world!"
 
 - name: fr
   image: alpine
   commands:
-  - echo bonjour monde
+  - echo "bonjour monde!"
 
 - name: sp
   image: alpine
   commands:
-  - echo hola mundo
+  - echo "hola mundo!"
 
 - name: notify
   image: plugins/slack
